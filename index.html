@@ -1,0 +1,601 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=5.0" />
+  <meta name="theme-color" content="#0f141e" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#f2f6fc" media="(prefers-color-scheme: light)" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="مهدی ابارشی" />
+  <meta name="application-name" content="مهدی ابارشی" />
+  <meta name="format-detection" content="telephone=no" />
+  <meta name="color-scheme" content="dark light" />
+  <title>مهدی ابارشی | توسعه‌دهنده فرانت‌اند و بک‌اند</title>
+  <meta name="description" content="وب‌سایت شخصی مهدی ابارشی — توسعه‌دهنده فرانت‌اند و بک‌اند" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><rect x='2' y='2' width='44' height='44' rx='12' fill='%230f141e'/><text x='24' y='31' font-size='17' font-family='monospace' font-weight='bold' fill='%2345b9ff' text-anchor='middle'>&lt;/&gt;</text></svg>" />
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><rect width='48' height='48' rx='10' fill='%230f141e'/><text x='24' y='32' font-size='18' font-family='monospace' font-weight='bold' fill='%2345b9ff' text-anchor='middle'>&lt;/&gt;</text></svg>" />
+  <link rel="manifest" href="data:application/manifest+json,{%22name%22%3A%22Mehdi%20Abarshi%22%2C%22short_name%22%3A%22Mahdi%22%2C%22start_url%22%3A%22.%22%2C%22scope%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%230f141e%22%2C%22theme_color%22%3A%22%230f141e%22%2C%22orientation%22%3A%22any%22%2C%22lang%22%3A%22fa%22%2C%22dir%22%3A%22rtl%22%2C%22icons%22%3A[{%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C<svg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20512%20512%27><rect%20width%3D%27512%27%20height%3D%27512%27%20rx%3D%27110%27%20fill%3D%27%230f141e%27/><text%20x%3D%27256%27%20y%3D%27340%27%20font-size%3D%27180%27%20font-family%3D%27monospace%27%20font-weight%3D%27bold%27%20fill%3D%27%2345b9ff%27%20text-anchor%3D%27middle%27>&lt;%2F&gt;</text></svg>%22%2C%22sizes%3A%22512x512%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%2C%22purpose%22%3A%22any%22}]}">
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="مهدی ابارشی | توسعه‌دهنده فرانت‌اند و بک‌اند" />
+  <meta property="og:description" content="پروژه‌های واقعی وب — از رابط کاربری مدرن تا سرور و API" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Vazirmatn:wght@300;400;500;600;700;800;900&family=Fira+Code:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="home" data-avail="open">
+
+  <div class="preloader" id="preloader" aria-hidden="true">
+    <div class="pre-term">
+      <div class="pre-head"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="pre-title">mehdi — zsh</span></div>
+      <div class="pre-body">
+        <div class="pre-line"><span class="pre-prompt">$</span> npm run start:mehdi</div>
+        <div class="pre-line">Loading resume...</div>
+        <div class="pre-line dim">HTML ✓ &nbsp;CSS ✓ &nbsp;JS ✓</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="scroll-progress" id="scrollProgress"></div>
+
+  <!-- دکمه‌ی نصب اپ (PWA) -->
+  <button class="pwa-install" id="pwaInstall" type="button" hidden>
+    <i class="fa-solid fa-download"></i>
+    <span>نصب اپ</span>
+    <span class="pwa-x" id="pwaDismiss">✕</span>
+  </button>
+
+  <button class="side-toggle" id="sideToggle" aria-label="باز و بسته کردن منو" title="منو"><span></span><span></span><span></span><i class="fa-solid fa-chevron-left side-toggle-chevron"></i></button>
+
+  <!-- بابل پیام ترمینال -->
+  <div class="term-tip" id="termTip"><i class="fa-solid fa-arrow-down"></i> <span data-i18n="term.tip">کمکی چیزی میخوای درخدمتم؟</span></div>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <a class="side-logo" href="#home">
+        <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <rect x="2.5" y="2.5" width="43" height="43" rx="12" stroke="currentColor" stroke-width="2.6"/>
+          <path d="M19.5 18.5 13 24l6.5 5.5M28.5 18.5 35 24l-6.5 5.5" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="wordmark" id="brandEn"></span>
+      </a>
+      <nav class="side-nav">
+        <a href="#home" class="active" data-spy="home"><i class="fa-solid fa-house"></i> <span data-i18n="nav.home">خانه</span></a>
+        <a href="#skills" data-spy="skills"><i class="fa-solid fa-bolt"></i> <span data-i18n="nav.skills">مهارت‌ها</span></a>
+        <a href="#projects" data-spy="projects"><i class="fa-solid fa-code"></i> <span data-i18n="nav.projects">پروژه‌ها</span></a>
+        <a href="#about" data-spy="about"><i class="fa-solid fa-user"></i> <span data-i18n="nav.about">درباره من</span></a>
+        <a href="#contact" data-spy="contact"><i class="fa-solid fa-paper-plane"></i> <span data-i18n="nav.contact">تماس با من</span></a>
+      </nav>
+      <div class="side-foot">
+        <button class="brush-btn wide" aria-label="شخصی‌سازی"><i class="fa-solid fa-paintbrush"></i> <span data-i18n="brush">شخصی‌سازی ظاهر</span></button>
+        <div class="side-socials">
+          <a href="https://t.me/pahlavi_mahdi" data-soc="telegram" target="_blank" rel="noopener" aria-label="تلگرام"><i class="fa-brands fa-telegram"></i></a>
+          <a href="https://github.com/pahlavi_mahdi" data-soc="github" target="_blank" rel="noopener" aria-label="گیت‌هاب"><i class="fa-brands fa-github"></i></a>
+          <a href="#" data-soc="instagram" aria-label="اینستاگرام"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" data-soc="youtube" aria-label="یوتیوب"><i class="fa-brands fa-youtube"></i></a>
+        </div>
+        <span class="side-ver"><span data-i18n="ver">ساخته‌شده با <i class="fa-solid fa-heart"></i> و کلی کد</span></span>
+      </div>
+    </aside>
+
+    <header class="topbar">
+      <a class="side-logo" href="#home">
+        <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <rect x="2.5" y="2.5" width="43" height="43" rx="12" stroke="currentColor" stroke-width="2.6"/>
+          <path d="M19.5 18.5 13 24l6.5 5.5M28.5 18.5 35 24l-6.5 5.5" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="wordmark" id="brandEnTop"></span>
+      </a>
+      <div class="topbar-actions">
+        <button class="brush-btn" aria-label="شخصی‌سازی"><i class="fa-solid fa-paintbrush"></i></button>
+        <button class="burger" id="burger" aria-label="منو"><span></span><span></span><span></span></button>
+      </div>
+    </header>
+    <div class="mobile-panel" id="mobilePanel">
+      <a href="#home" class="active" data-spy="home"><i class="fa-solid fa-house"></i> <span data-i18n="nav.home">خانه</span></a>
+      <a href="#skills" data-spy="skills"><i class="fa-solid fa-bolt"></i> <span data-i18n="nav.skills">مهارت‌ها</span></a>
+      <a href="#projects" data-spy="projects"><i class="fa-solid fa-code"></i> <span data-i18n="nav.projects">پروژه‌ها</span></a>
+      <a href="#about" data-spy="about"><i class="fa-solid fa-user"></i> <span data-i18n="nav.about">درباره من</span></a>
+      <a href="#contact" data-spy="contact"><i class="fa-solid fa-paper-plane"></i> <span data-i18n="nav.contact">تماس با من</span></a>
+    </div>
+
+    <div class="settings-panel" id="settingsPanel">
+      <div class="sp-head"><b data-i18n="sp.t">شخصی‌سازی ظاهر 🎨</b><button class="sp-close" id="spClose">✕</button></div>
+      <p class="sp-label" data-i18n="sp.mode">حالت نمایش</p>
+      <div class="sp-modes">
+        <button data-mode="dark" class="active">🌙 <span data-i18n="sp.dark">تیره</span></button>
+        <button data-mode="light">☀️ <span data-i18n="sp.light">روشن</span></button>
+      </div>
+      <p class="sp-label" data-i18n="sp.color">رنگ اصلی سایت</p>
+      <div class="sp-colors" id="spColors"></div>
+      <p class="sp-label" data-i18n="sp.lang">زبان سایت / Language</p>
+      <div class="sp-modes">
+        <button data-lang="fa" class="active">فارسی</button>
+        <button data-lang="en">English</button>
+      </div>
+      <p class="sp-label" data-i18n="sp.fs">اندازه‌ی متن</p>
+      <div class="sp-modes sp-fs">
+        <button data-fs="0.9" type="button">A-</button>
+        <button data-fs="1" class="active" type="button">A</button>
+        <button data-fs="1.1" type="button">A+</button>
+        <button data-fs="1.25" type="button">A++</button>
+      </div>
+      <button class="brush-btn wide sp-pdf" id="pdfPanelBtn"><i class="fa-solid fa-file-pdf"></i> <span data-i18n="sp.pdf">دانلود رزومه (PDF)</span></button>
+    </div>
+
+    <main>
+      <section class="hero container" id="home">
+        <canvas class="hero-canvas" id="particles" aria-hidden="true"></canvas>
+        <div class="hero-grid">
+          <div class="hero-text">
+            <span class="kicker reveal"><i class="fa-solid fa-code"></i> <span data-i18n="kicker">به دنیای کدِ من خوش اومدی</span></span>
+            <h1 class="reveal d1"><span data-i18n="h1a">من</span> <span class="hl" id="heroName"></span> <span data-i18n="h1b">هستم</span></h1>
+            <div class="typer-line reveal d1"><span class="typer" id="typer"></span><span class="caret"></span></div>
+            <p class="lead reveal d2" data-i18n="lead">اینجا <b>پروژه‌های واقعی وب</b> می‌سازم — از رابط‌های کاربری مدرن تا سرور و API.</p>
+          </div>
+          <div class="hero-visual reveal d2">
+            <span class="hero-status" id="heroStatus" data-st-text="آماده همکاری" title="وضعیت همکاری"></span>
+            <div class="hero-term" id="heroTerm">
+              <div class="ht-head">
+                <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+                <span class="ht-title" id="htTitleBar"></span>
+                <button class="ht-copy" id="htCopy" title="کپی JSON" aria-label="کپی JSON"><i class="fa-regular fa-copy"></i></button>
+              </div>
+              <div class="ht-body" id="htBody"></div>
+              <div class="ht-foot">
+                <span class="ht-live">live</span>
+                <span class="ht-api">mehdi.dev/api/resume</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="sec container" id="skills">
+        <div class="sec-head reveal"><span class="sec-bar"></span><div>
+          <span class="sec-tag" data-i18n="s.skills.tag">// مهارت‌ها</span>
+          <h2 data-i18n="s.skills.h">چیکارها می‌تونم بکنم؟</h2>
+          <p class="sec-sub" data-i18n="s.skills.sub">روی هر مهارت مکث کن (یا بزن) تا ببینی دقیقاً باهاش چه کارهایی از دستم برمیاد.</p>
+        </div></div>
+        <div class="skills-wrap reveal d1" id="skillsWrap"></div>
+        <button class="skills-more reveal d1" id="skillsMore" type="button">
+          <span id="skillsMoreTxt">نمایش بیشتر</span> <i class="fa-solid fa-chevron-down"></i>
+        </button>
+      </section>
+
+      <section class="sec container" id="values">
+        <div class="sec-head reveal"><span class="sec-bar"></span><div>
+          <span class="sec-tag">// values</span>
+          <h2 data-i18n="s.val.h">ارزش‌های من</h2>
+          <p class="sec-sub" data-i18n="s.val.sub">چیزهایی که توی کار و کدم برام مهمه 👇</p>
+        </div></div>
+        <div class="values-list reveal d1" id="valuesList"></div>
+      </section>
+
+      <section class="sec container" id="projects">
+        <div class="sec-head reveal"><span class="sec-bar"></span><div>
+          <span class="sec-tag" data-i18n="s.proj.tag">// نمونه‌کارها</span>
+          <h2 data-i18n="s.proj.h">پروژه‌های من</h2>
+          <p class="sec-sub" data-i18n="s.proj.sub">برای هر پروژه، دمو آنلاین، سورس‌کد و ویدیوی معرفی در دسترس شماست.</p>
+        </div></div>
+        <div class="filters reveal" id="filters"></div>
+        <div class="p-index reveal d1" id="pIndex"></div>
+        <button class="p-more reveal d1" id="pMore" type="button" hidden>
+          <span id="pMoreTxt">نمایش بیشتر</span> <i class="fa-solid fa-chevron-down"></i>
+        </button>
+      </section>
+
+      <section class="sec container" id="about">
+        <div class="sec-head reveal"><span class="sec-bar"></span><div>
+          <span class="sec-tag" data-i18n="s.about.tag">// درباره من</span>
+          <h2 data-i18n="s.about.h">آشنایی با مهدی ابارشی</h2>
+          <p class="sec-sub" data-i18n="s.about.sub">مسیری که از صفر تا امروز اومدم 👇</p>
+        </div></div>
+        <div class="about-wrap">
+          <div class="timeline reveal" id="timeline"></div>
+        </div>
+        <div class="about-stats reveal d1" id="counterRow">
+          <div class="gcard"><b data-count="16">۱۶</b><span data-i18n="c.age">ساله</span></div>
+          <div class="gcard"><b data-count="2" data-plus="+">۲+</b><span data-i18n="c.exp">سال کدنویسی</span></div>
+          <div class="gcard"><b class="g-ic"><i class="fa-solid fa-graduation-cap"></i></b><span data-i18n="c.edu">دیپلم · در حال تحصیل</span></div>
+          <div class="gcard">
+            <b class="ltr" style="font-size:1.35rem">&lt;/&gt; {}</b>
+            <div class="glist"><span data-i18n="c.fe">فرانت‌اند</span><span data-i18n="c.be">بک‌اند</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="sec container" id="availability">
+        <div class="avail-card reveal">
+          <span class="avail-kicker"><span class="avail-dot"></span> <span id="avKicker">آماده همکاری</span></span>
+          <h2 data-i18n="av.h">وضعیت همکاری</h2>
+          <p id="avText">در حال حاضر آماده‌ی پروژه‌های جدید هستم — اگر ایده‌ای داری، خوشحال می‌شم ازش بشنوم.</p>
+          <button class="avail-btn" id="availBtn" type="button"><i class="fa-solid fa-comments"></i> <span data-i18n="av.btn">گفتگو کنیم</span></button>
+        </div>
+      </section>
+
+      <section class="sec container" id="contact">
+        <div class="contact-head reveal">
+          <span class="sec-tag">// contact</span>
+          <h2 data-i18n="c.h">تماس با من</h2>
+          <p data-i18n="c.sub">پروژه‌ای در ذهن داری یا می‌خوای درباره‌ی یه فرصت صحبت کنیم؟ خوشحال می‌شم ازت بشنوم — معمولاً سریع جواب می‌دم.</p>
+        </div>
+        <div class="contact-grid reveal d1">
+          <a class="c-card" data-cc="green" style="--cc:#3ddc97;--cc-bg:rgba(61,220,151,.07);--cc-bg-hover:rgba(61,220,151,.12);--cc-bd:rgba(61,220,151,.35)" data-contact="phone" href="tel:+989919646702">
+            <span class="c-ic"><i class="fa-solid fa-phone"></i></span>
+            <span class="c-arrow"><i class="fa-solid fa-arrow-up-left-from-square"></i></span>
+            <span class="c-lbl" data-i18n="c.phone">تلفن</span>
+            <span class="c-val ltr" data-cv="phone">+98 991 964 6702</span>
+          </a>
+          <a class="c-card" data-cc="blue" style="--cc:#45b9ff;--cc-bg:rgba(69,185,255,.07);--cc-bg-hover:rgba(69,185,255,.12);--cc-bd:rgba(69,185,255,.35)" data-contact="email" href="mailto:abareshimahdi662@gmail.com">
+            <span class="c-ic"><i class="fa-regular fa-envelope"></i></span>
+            <span class="c-arrow"><i class="fa-solid fa-arrow-up-left-from-square"></i></span>
+            <span class="c-lbl" data-i18n="c.email">ایمیل</span>
+            <span class="c-val ltr" data-cv="email">abareshimahdi662@gmail.com</span>
+          </a>
+          <div class="c-card" data-cc="purple" style="--cc:#8b7cff;--cc-bg:rgba(139,124,255,.07);--cc-bg-hover:rgba(139,124,255,.12);--cc-bd:rgba(139,124,255,.35)">
+            <span class="c-ic"><i class="fa-brands fa-telegram"></i></span>
+            <span class="c-arrow"><i class="fa-solid fa-arrow-up-left-from-square"></i></span>
+            <span class="c-lbl" data-i18n="c.tg">تلگرام</span>
+            <span class="c-val" data-i18n="c.tgval" style="font-family:var(--font-persian);letter-spacing:0;text-shadow:none">سریع‌ترین راه ارتباطی با من</span>
+            <div class="c-btns">
+              <button class="c-btn" id="copyTg" type="button"><i class="fa-regular fa-copy"></i> <span data-i18n="c.copy">کپی آیدی</span></button>
+              <button class="c-btn solid" id="tgBtn" type="button"><i class="fa-brands fa-telegram"></i> <span data-i18n="c.open">رفتن به تلگرام</span></button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <footer>
+    <div class="container f-in">
+      <div class="f-grid">
+        <div class="f-brand">
+          <div class="f-logo">
+            <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+              <rect x="2.5" y="2.5" width="43" height="43" rx="12" stroke="currentColor" stroke-width="2.6"/>
+              <path d="M19.5 18.5 13 24l6.5 5.5M28.5 18.5 35 24l-6.5 5.5" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="f-name" id="footerName"></span>
+          </div>
+          <p class="f-tag" data-i18n="foot.tag">توسعه‌دهنده‌ی فرانت‌اند و بک‌اند — در حال ساخت چیزهای واقعی با کد.</p>
+          <div class="f-status-row">
+            <span class="f-status"><span class="status-dot"></span><span id="fStatusTxt" data-i18n="st.open">آماده همکاری</span></span>
+            <span class="f-loc"><i class="fa-solid fa-location-dot"></i> <span data-i18n="foot.loc">ایران</span> 🇮🇷</span>
+          </div>
+        </div>
+        <div class="f-col">
+          <h4 data-i18n="foot.exp">بخش‌ها</h4>
+          <a href="#home" data-i18n="nav.home">خانه</a>
+          <a href="#skills" data-i18n="nav.skills">مهارت‌ها</a>
+          <a href="#projects" data-i18n="nav.projects">پروژه‌ها</a>
+          <a href="#about" data-i18n="nav.about">درباره من</a>
+          <a href="#contact" data-i18n="nav.contact">تماس با من</a>
+        </div>
+        <div class="f-col">
+          <h4 data-i18n="foot.res">منابع</h4>
+          <a href="https://github.com/pahlavi_mahdi" data-soc="github" target="_blank" rel="noopener"><i class="fa-brands fa-github"></i> <span data-i18n="soc.gh">گیت‌هاب</span></a>
+          <a href="https://t.me/pahlavi_mahdi" data-soc="telegram" target="_blank" rel="noopener"><i class="fa-brands fa-telegram"></i> <span data-i18n="soc.tg">تلگرام</span></a>
+          <a href="#" data-soc="instagram"><i class="fa-brands fa-instagram"></i> <span data-i18n="soc.ig">اینستاگرام</span></a>
+          <a href="#" data-soc="youtube"><i class="fa-brands fa-youtube"></i> <span data-i18n="soc.yt">یوتیوب</span></a>
+          <button type="button" id="fBackTop"><i class="fa-solid fa-arrow-up"></i> <span data-i18n="foot.top">بالای صفحه</span></button>
+        </div>
+        <div class="f-col">
+          <h4 data-i18n="foot.contact">راه‌های ارتباطی</h4>
+          <a href="tel:+989919646702" data-contact="phone"><i class="fa-solid fa-phone"></i> <span class="ltr" data-cv="phone">+98 991 964 6702</span></a>
+          <a href="mailto:abareshimahdi662@gmail.com" data-contact="email"><i class="fa-regular fa-envelope"></i> <span class="ltr" data-cv="email">abareshimahdi662@gmail.com</span></a>
+          <a href="https://t.me/pahlavi_mahdi" data-soc="telegram" target="_blank" rel="noopener"><i class="fa-brands fa-telegram"></i> <span class="ltr" data-cv="tg">@pahlavi_mahdi</span></a>
+        </div>
+      </div>
+      <div class="f-bottom">
+        <span class="f-copy"><span data-i18n="foot.pre">©</span> <span id="copyYear" style="font-family:var(--font-fira)">۱۴۰۵</span> <b id="footerName2"></b> <span data-i18n="foot.post">— تمام حقوق محفوظ است.</span></span>
+        <span class="f-built"><span data-i18n="foot.built">ساخته‌شده با</span> <i class="fa-solid fa-heart"></i> <span data-i18n="foot.built2">و کلی کد</span> · <span class="f-tech">HTML · CSS · JS</span></span>
+      </div>
+    </div>
+  </footer>
+
+
+  <div class="site-modal" id="siteModal">
+    <div class="site-back" data-sclose></div>
+    <div class="site-halo" aria-hidden="true"></div>
+    <div class="site-frame" role="dialog" aria-modal="true">
+      <div class="sf-head">
+        <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+        <span class="sf-title" id="sfTitle"></span>
+        <a class="sf-open" id="sfNewTab" href="#" target="_blank" rel="noopener"><i class="fa-solid fa-up-right-from-square"></i> <span data-i18n="sf.newtab">تب جدید</span></a>
+        <button class="x-btn" data-sclose aria-label="بستن"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <iframe class="sf-frame" id="sfFrame" title="پیش‌نمایش پروژه"></iframe>
+    </div>
+  </div>
+
+  <!-- مودال جزئیات پروژه (برای پروژه‌هایی که embed ندارن) -->
+  <div class="modal" id="pModal">
+    <div class="modal-back" data-close></div>
+    <div class="modal-card" data-lenis-prevent>
+      <div class="m-head" id="mHead">
+        <i id="mIcon" class="fa-solid fa-mug-hot"></i>
+        <button class="x-btn" data-close aria-label="بستن"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="m-body">
+        <div class="m-meta"><span><span data-i18n="m.cat">دسته‌بندی:</span> <b id="mCat"></b></span><span><span data-i18n="m.year">سال:</span> <b id="mYear"></b></span></div>
+        <h3 id="mTitle"></h3>
+        <p id="mDesc"></p>
+        <div class="m-tags" id="mTags"></div>
+        <div class="m-actions" id="mActions"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toasts" id="toasts"></div>
+
+  <button class="term-fab" id="termFab" title="Terminal" aria-label="ترمینال"><i class="fa-solid fa-terminal"></i></button>
+  <div class="term-modal" id="termModal">
+    <div class="modal-back" data-tclose></div>
+    <div class="term-win">
+      <div class="term-head">
+        <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+        <span class="term-title">mehdi@resume — bash</span>
+        <button class="x-btn" data-tclose style="position:static" aria-label="بستن"><i class="fa-solid fa-xmark"></i></button>
+        <button class="term-hint" id="termHelpBtn" type="button" title="راهنما"><i class="fa-solid fa-circle-question"></i> help</button>
+      </div>
+      <div class="term-out" id="termOut" data-lenis-prevent></div>
+      <div class="term-row"><span class="term-ps">$</span><input id="termIn" autocomplete="off" spellcheck="false" placeholder="help" /></div>
+    </div>
+  </div>
+
+<!-- ورود ادمین -->
+  <div class="modal" id="loginModal">
+    <div class="modal-back" data-lclose></div>
+    <div class="modal-card" style="width:min(380px,100%)" data-lenis-prevent>
+      <div class="m-body">
+        <button class="x-btn" data-lclose aria-label="بستن"><i class="fa-solid fa-xmark"></i></button>
+        <div class="lg-head">
+          <span class="lg-ic"><i class="fa-solid fa-lock"></i></span>
+          <b data-i18n="adm.loginTitle">ورود مدیر</b>
+          <span data-i18n="adm.loginSub">ورود فقط با رمز مدیر — رمز هیچ‌جای کد ذخیره نیست</span>
+        </div>
+        <!-- فرم ورود -->
+        <div id="lgLoginBox">
+          <label class="a-lbl" for="lgPass">رمز عبور</label>
+          <input class="a-in" id="lgPass" type="password" autocomplete="current-password" placeholder="••••••••" />
+          <button class="pw-eye" type="button" data-eye="lgPass"><i class="fa-regular fa-eye"></i> <span>نمایش رمز</span></button>
+          <div class="a-err" id="lgErr"></div>
+          <div class="a-ok" id="lgOk"></div>
+          <button class="a-btn pri" id="lgGo" style="width:100%;justify-content:center;padding:12px"><i class="fa-solid fa-right-to-bracket"></i> <span data-i18n="adm.loginBtn">ورود به پنل</span></button>
+        </div>
+        <!-- فرم تعیین رمز (فقط بار اول، قبل از ساخت رمز) -->
+        <div id="lgSetupBox" hidden>
+          <span class="a-ok" id="setupNote" style="display:block;margin-bottom:10px"></span>
+          <label class="a-lbl" for="suPass1">رمز مدیر</label>
+          <input class="a-in" id="suPass1" type="password" autocomplete="new-password" placeholder="حداقل ۸ کاراکتر" />
+          <button class="pw-eye" type="button" data-eye="suPass1"><i class="fa-regular fa-eye"></i> <span>نمایش رمز</span></button>
+          <label class="a-lbl" for="suPass2">تکرار رمز</label>
+          <input class="a-in" id="suPass2" type="password" autocomplete="new-password" placeholder="همان رمز بالا" />
+          <div class="a-err" id="suErr"></div>
+          <button class="a-btn pri" id="suGo" style="width:100%;justify-content:center;padding:12px;margin-top:6px"><i class="fa-solid fa-key"></i> <span>ساخت رمز و ورود</span></button>
+        </div>
+        <!-- پیام وقتی بک‌اند PHP در دسترس نیست -->
+        <div id="lgOfflineBox" hidden>
+          <div class="a-err" style="display:block;line-height:2">پنل مدیریت فقط وقتی سایت روی هاست (با PHP) بالا باشد کار می‌کند.</div>
+        </div>
+      </div>
+    </div>
+  </div><!-- پنل ادمین -->
+  <div class="admin" id="admin">
+    <div class="a-top">
+      <div class="a-brand">
+        <i class="fa-solid fa-shield-halved"></i>
+        <div><span data-i18n="adm.title">پنل مدیریت</span><small data-i18n="adm.sub">مهدی ابارشی — نسخه شبیه‌سازی</small></div>
+      </div>
+      <div class="a-actions">
+        <button class="a-btn pri" id="aSave" hidden><i class="fa-solid fa-floppy-disk"></i> <span data-i18n="adm.save">ذخیره</span> <b id="aDirty">۰</b></button>
+        <button class="a-btn" id="aView"><i class="fa-solid fa-eye"></i> <span data-i18n="adm.view">مشاهده سایت</span></button>
+        <button class="a-btn danger" id="aLogout"><i class="fa-solid fa-right-from-bracket"></i> <span data-i18n="adm.logout">خروج</span></button>
+      </div>
+    </div>
+    <div class="a-body">
+      <nav class="a-side">
+        <button class="a-tab on" data-tab="dash"><i class="fa-solid fa-gauge"></i> <span data-i18n="adm.dash">داشبورد</span></button>
+        <button class="a-tab" data-tab="projects"><i class="fa-solid fa-folder"></i> <span data-i18n="nav.projects">پروژه‌ها</span></button>
+        <button class="a-tab" data-tab="skills"><i class="fa-solid fa-bolt"></i> <span data-i18n="nav.skills">مهارت‌ها</span></button>
+        <button class="a-tab" data-tab="timeline"><i class="fa-solid fa-route"></i> <span data-i18n="adm.timeline">تایم‌لاین</span></button>
+        <button class="a-tab" data-tab="stats"><i class="fa-solid fa-chart-line"></i> <span data-i18n="adm.stats">آمار بازدید</span></button>
+        <button class="a-tab" data-tab="look"><i class="fa-solid fa-image"></i> <span data-i18n="adm.look">ظاهر سایت</span></button>
+        <button class="a-tab" data-tab="hterm"><i class="fa-solid fa-terminal"></i> <span data-i18n="adm.hterm">ترمینال هیرو</span></button>
+        <button class="a-tab" data-tab="avail"><i class="fa-solid fa-circle-half-stroke"></i> <span data-i18n="adm.avail">وضعیت همکاری</span></button>
+        <button class="a-tab" data-tab="settings"><i class="fa-solid fa-gear"></i> <span data-i18n="adm.settings">تنظیمات</span></button>
+      </nav>
+      <div class="a-main" data-lenis-prevent>
+        <div class="a-pane on" id="pane-dash">
+          <div class="a-stats" id="aStats"></div>
+        </div>
+        <div class="a-pane" id="pane-projects">
+          <div class="a-list-head">
+            <h3><i class="fa-solid fa-folder"></i> <span data-i18n="adm.mngProj">مدیریت پروژه‌ها</span></h3>
+            <button class="a-btn pri" id="aAddProj"><i class="fa-solid fa-plus"></i> <span data-i18n="adm.newProj">پروژه جدید</span></button>
+          </div>
+          <div id="aProjList"></div>
+        </div>
+        <div class="a-pane" id="pane-skills">
+          <div class="a-list-head">
+            <h3><i class="fa-solid fa-bolt"></i> <span data-i18n="adm.mngSkill">مدیریت مهارت‌ها</span></h3>
+            <button class="a-btn pri" id="aAddSkill"><i class="fa-solid fa-plus"></i> <span data-i18n="adm.newSkill">مهارت جدید</span></button>
+          </div>
+          <div id="aSkillList"></div>
+        </div>
+        <div class="a-pane" id="pane-timeline">
+          <div class="a-list-head">
+            <h3><i class="fa-solid fa-route"></i> <span data-i18n="adm.mngTl">مدیریت تایم‌لاین</span></h3>
+            <button class="a-btn pri" id="aAddTl"><i class="fa-solid fa-plus"></i> <span data-i18n="adm.newStep">مرحله جدید</span></button>
+          </div>
+          <div id="aTlList"></div>
+        </div>
+        <div class="a-pane" id="pane-stats">
+          <div class="a-list-head"><h3><i class="fa-solid fa-chart-line"></i> <span data-i18n="adm.stats">آمار بازدید سایت</span></h3></div>
+          <div class="a-stats" id="vStats"></div>
+          <div class="a-card">
+            <h3><i class="fa-solid fa-chart-column"></i> <span data-i18n="adm.chartTitle">۱۴ روز اخیر</span></h3>
+            <div class="v-chart" id="vChart"></div>
+          </div>
+        </div>
+        <div class="a-pane" id="pane-look">
+          <div class="a-list-head"><h3><i class="fa-solid fa-image"></i> <span data-i18n="adm.look">ظاهر سایت — رنگ و نام</span></h3></div>
+
+          <!-- رنگ پیش‌فرض سایت -->
+          <div class="a-card">
+            <h3><i class="fa-solid fa-palette"></i> رنگ پیش‌فرض سایت</h3>
+            <p style="margin-top:4px">رنگی که موقع ورود اولیه‌ی کاربر به سایت می‌بینه رو انتخاب کن.</p>
+            <div id="adminColors" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px"></div>
+            <input type="hidden" id="adminColorIdx" value="0">
+          </div>
+
+          <!-- تغییر اسم سایت -->
+          <div class="a-card">
+            <h3><i class="fa-solid fa-signature"></i> نام سایت</h3>
+            <p style="margin-top:4px">این نام در ۳ جای سایت (لوگوی بالا، فوتر و عنوان مرورگر) نمایش داده می‌شه.</p>
+            <label class="a-lbl" for="siteNameIn">نام سایت (به انگلیسی)</label>
+            <input class="a-in ltr" id="siteNameIn" placeholder="mahdi dev" style="text-align:left;direction:ltr" />
+            <div class="a-actions-row">
+              <button class="a-btn pri" id="saveSiteName"><i class="fa-solid fa-floppy-disk"></i> ذخیره نام</button>
+            </div>
+          </div>
+        </div>
+        <!-- ═══ ترمینال هیرو — ویرایش کامل ═══ -->
+        <div class="a-pane" id="pane-hterm">
+          <div class="a-list-head"><h3><i class="fa-solid fa-terminal"></i> <span data-i18n="adm.hterm">ترمینال هیرو — ویرایش کامل</span></h3></div>
+          <div class="a-card">
+            <p>این دقیقاً همون ترمینالیه که توی هیرو سایت می‌بینیم 👇 هر فیلدی رو پایین تغییر بدی، همین‌جا لحظه‌ای به‌روز می‌شه؛ بعد «ذخیره ترمینال» رو بزن تا روی سایت اعمال بشه.</p>
+            <div style="max-width:380px;margin:16px auto 0">
+              <div class="hero-term">
+                <div class="ht-head">
+                  <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+                  <span class="ht-title" id="htPrevTitle"></span>
+                </div>
+                <div class="ht-body" id="htPrevBody"></div>
+                <div class="ht-foot">
+                  <span class="ht-live">live</span>
+                  <span class="ht-api">mehdi.dev/api/resume</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="a-card">
+            <h3><i class="fa-solid fa-pen-nib"></i> فیلدهای ترمینال</h3>
+            <label class="a-lbl" for="htFTitle">عنوان نوار بالا</label>
+            <input class="a-in ltr" id="htFTitle" placeholder="GET /developer/mahdi-abarshi">
+            <label class="a-lbl" for="htFPath">مسیر (endpoint)</label>
+            <input class="a-in ltr" id="htFPath" placeholder="/developer/mahdi-abarshi">
+            <div class="a-grid2">
+              <div><label class="a-lbl" for="htFName">نام</label><input class="a-in ltr" id="htFName" placeholder="Mahdi Abarshi"></div>
+              <div><label class="a-lbl" for="htFRole">عنوان شغلی</label><input class="a-in ltr" id="htFRole" placeholder="Full-Stack Developer"></div>
+            </div>
+            <div class="a-grid2">
+              <div><label class="a-lbl" for="htFAge">سن</label><input class="a-in" id="htFAge" inputmode="numeric" placeholder="16"></div>
+              <div><label class="a-lbl" for="htFStatus">وضعیت</label><input class="a-in ltr" id="htFStatus" placeholder="open_to_work"></div>
+            </div>
+            <div class="a-grid2">
+              <div><label class="a-lbl" for="htFCountry">کشور (انگلیسی)</label><input class="a-in ltr" id="htFCountry" placeholder="Iran"></div>
+              <div><label class="a-lbl" for="htFCity">شهر (انگلیسی)</label><input class="a-in ltr" id="htFCity" placeholder="Sabzevar"></div>
+            </div>
+            <label class="a-lbl" for="htFStack">استک (با کاما جدا کن)</label>
+            <input class="a-in ltr" id="htFStack" placeholder="HTML, CSS, JavaScript, Node.js, Python">
+            <label class="a-lbl" for="htFProjects">پروژه‌های من (هر خط یک اسم)</label>
+            <textarea class="a-in ltr" id="htFProjects" style="min-height:96px" placeholder="Trisa Café&#10;Online Shop Boutique&#10;Ahan Pich"></textarea>
+            <div class="a-actions-row">
+              <button class="a-btn pri" id="aSaveTerm"><i class="fa-solid fa-floppy-disk"></i> ذخیره ترمینال</button>
+              <button class="a-btn" id="aResetTerm"><i class="fa-solid fa-rotate-left"></i> بازگردانی پیش‌فرض</button>
+            </div>
+          </div>
+        </div>
+        <!-- ═══ وضعیت همکاری ═══ -->
+        <div class="a-pane" id="pane-avail">
+          <div class="a-list-head"><h3><i class="fa-solid fa-circle-half-stroke"></i> <span data-i18n="adm.avail">وضعیت همکاری</span></h3></div>
+          <div class="a-card">
+            <p>وضعیت رو انتخاب کن — بلافاصله روی بنر «وضعیت همکاری» سایت اعمال می‌شه و رنگ و متنش عوض می‌شه:</p>
+            <div class="av-opts" id="avOpts">
+              <label class="av-opt" data-av="open" style="--oc:#3ddc97">
+                <input type="radio" name="avail" value="open">
+                <span class="av-dot-mini"></span>
+                <div><b>🟢 آماده همکاری</b><span>کار فعلی ندارم و آماده‌ی پروژه‌های جدید هستم</span></div>
+              </label>
+              <label class="av-opt" data-av="busy-free" style="--oc:#ff9f43">
+                <input type="radio" name="avail" value="busy-free">
+                <span class="av-dot-mini"></span>
+                <div><b>🟠 درحال انجام پروژه — وقت آزاد داریم</b><span>روی یه پروژه کار می‌کنم ولی ظرفیت پروژه‌ی دیگه هم دارم</span></div>
+              </label>
+              <label class="av-opt" data-av="busy" style="--oc:#ff5252">
+                <input type="radio" name="avail" value="busy">
+                <span class="av-dot-mini"></span>
+                <div><b>🔴 درحال انجام پروژه</b><span>کامل مشغولم و فعلاً ظرفیت پروژه‌ی جدید ندارم</span></div>
+              </label>
+            </div>
+            <div class="a-actions-row">
+              <button class="a-btn pri" id="aSaveAvail"><i class="fa-solid fa-floppy-disk"></i> <span data-i18n="adm.saveAvail">ذخیره وضعیت</span></button>
+            </div>
+          </div>
+        </div>
+        <div class="a-pane" id="pane-settings">
+          <div class="a-list-head"><h3><i class="fa-solid fa-gear"></i> <span data-i18n="adm.settings">تنظیمات سایت</span></h3></div>
+          <div class="a-card">
+            <h3><i class="fa-solid fa-address-book"></i> <span data-i18n="adm.f.contact">راه‌های ارتباطی</span></h3>
+            <label class="a-lbl" for="sPhone" data-i18n="adm.f.phone">شماره تلفن</label>
+            <input class="a-in ltr" id="sPhone" placeholder="+98 991 964 6702" />
+            <label class="a-lbl" for="sEmail" data-i18n="adm.f.email">ایمیل</label>
+            <input class="a-in ltr" id="sEmail" placeholder="abareshimahdi662@gmail.com" />
+          </div>
+          <div class="a-card">
+            <h3><i class="fa-solid fa-share-nodes"></i> <span data-i18n="adm.f.social">شبکه‌های اجتماعی</span></h3>
+            <p data-i18n="adm.f.soonNote">هر فیلدی را خالی بگذاری، لینکش روی سایت غیرفعال می‌شود و کلیک روی آن پیام «به زودی» نشان می‌دهد.</p>
+            <label class="a-lbl" for="sTg" data-i18n="adm.f.tg">تلگرام — آیدی (بدون @)</label>
+            <input class="a-in ltr" id="sTg" placeholder="pahlavi_mahdi" />
+            <label class="a-lbl" for="sGh" data-i18n="adm.f.gh">گیت‌هاب — username یا لینک</label>
+            <input class="a-in ltr" id="sGh" placeholder="pahlavi_mahdi" />
+            <label class="a-lbl" for="sIg" data-i18n="adm.f.ig">اینستاگرام — username یا لینک (خالی = به زودی)</label>
+            <input class="a-in ltr" id="sIg" placeholder="my.instagram" />
+            <label class="a-lbl" for="sYt" data-i18n="adm.f.yt">یوتیوب — آیدی کانال یا لینک (خالی = به زودی)</label>
+            <input class="a-in ltr" id="sYt" placeholder="@mychannel" />
+          </div>
+          <div class="a-card">
+            <h3><i class="fa-solid fa-quote-right"></i> <span data-i18n="adm.f.texts">متن‌های هیرو</span></h3>
+            <label class="a-lbl" for="sLeadFa" data-i18n="adm.f.leadFa">جمله‌ی هیرو — فارسی</label>
+            <input class="a-in" id="sLeadFa" placeholder="اینجا پروژه‌های واقعی وب می‌سازم…" />
+            <label class="a-lbl" for="sLeadEn" data-i18n="adm.f.leadEn">جمله‌ی هیرو — English</label>
+            <input class="a-in ltr" id="sLeadEn" placeholder="Here I build real web projects…" />
+          </div>
+          <div class="a-actions-row">
+            <button class="a-btn pri" id="aSaveSettings"><i class="fa-solid fa-floppy-disk"></i> <span data-i18n="adm.saveSettings">ذخیره تنظیمات</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><div class="modal" id="afModal">
+    <div class="modal-back" data-afclose></div>
+    <div class="modal-card" style="width:min(620px,100%)" data-lenis-prevent>
+      <div class="m-body">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+          <h3 id="afTitle" style="font-size:1.1rem;font-weight:900"></h3>
+          <button class="x-btn" data-afclose style="position:static" aria-label="بستن"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div id="afFields"></div>
+        <div class="a-actions-row" style="margin-top:16px">
+          <button class="a-btn pri" id="afSave"><i class="fa-solid fa-check"></i> <span data-i18n="adm.submit">ثبت</span></button>
+          <button class="a-btn" data-afclose><span data-i18n="adm.cancel">لغو</span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ کتابخانه‌های اسکرول و انیمیشن: Lenis + GSAP + barba.js ═══ -->
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1/dist/lenis.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@barba/core@2/dist/barba.umd.js"></script>
+
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

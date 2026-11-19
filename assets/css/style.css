@@ -1,0 +1,923 @@
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg-primary:#0f141e;--bg-secondary:#171c28;--bg-tertiary:#1d2434;--border-color:#273046;
+  --text-secondary:#9aa5bd;--sk:#45b9ff;--sk-strong:#7cd3ff;--pu:#8b7cff;--gr:#3ddc97;--or:#ff9f43;--rd:#ff5252;
+  --font-persian:"Peyda","Vazirmatn",sans-serif;--font-fira:"Fira Code",monospace;
+  --topbar-h:62px;
+}
+html{scroll-behavior:smooth;overscroll-behavior-y:none;padding:5px}
+section{scroll-margin-top:76px}
+body{font-family:var(--font-persian);background:var(--bg-primary);color:#fff;line-height:1.9;overscroll-behavior-y:none}
+::selection{background:var(--sk);color:#061423}
+::-webkit-scrollbar{width:8px}
+::-webkit-scrollbar-track{background:var(--bg-primary)}
+::-webkit-scrollbar-thumb{background:#2c3550;border-radius:50px}
+img,pre,iframe,svg{max-width:100%}
+[hidden]{display:none!important}
+:focus-visible{outline:2px solid var(--sk);outline-offset:3px;border-radius:6px}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.05;background-image:linear-gradient(var(--border-color) 1px,transparent 1px),linear-gradient(90deg,var(--border-color) 1px,transparent 1px);background-size:46px 46px}
+.ltr{direction:ltr;font-family:var(--font-fira)}
+
+.layout{display:flex;min-height:calc(100vh - 10px);position:relative;z-index:1}
+main{flex:1;min-width:0}
+.container{max-width:1000px;margin-inline:auto;padding-left:18px;padding-right:18px}
+@media (min-width:640px){.container{padding-left:clamp(18px,4vw,42px);padding-right:clamp(18px,4vw,42px)}}
+
+.sidebar{display:none}
+.topbar{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--topbar-h);background:rgba(15,20,30,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border-color);padding:0 14px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+body{padding-top:var(--topbar-h)}
+.side-logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff;padding:0 4px;min-width:0;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}
+.side-logo svg{width:34px;height:34px;color:var(--sk);flex-shrink:0}
+.wordmark{font-family:var(--font-fira);font-weight:700;font-size:1rem;direction:ltr;letter-spacing:-.5px;white-space:nowrap}
+.topbar-actions{display:flex;align-items:center;gap:7px;flex-shrink:0}
+.burger{width:42px;height:42px;border-radius:12px;border:1px solid var(--border-color);background:var(--bg-secondary);cursor:pointer;position:relative;flex-shrink:0}
+.burger span{position:absolute;right:11px;width:20px;height:2px;background:#fff;border-radius:2px;transition:.3s}
+.burger span:nth-child(1){top:14px}.burger span:nth-child(2){top:20px}.burger span:nth-child(3){top:26px}
+.burger.open span:nth-child(1){top:20px;transform:rotate(45deg)}
+.burger.open span:nth-child(2){opacity:0}
+.burger.open span:nth-child(3){top:20px;transform:rotate(-45deg)}
+.mobile-panel{position:fixed;top:calc(var(--topbar-h) + 6px);left:12px;right:12px;z-index:99;background:rgba(23,28,40,.97);border:1px solid var(--border-color);border-radius:18px;padding:10px;opacity:0;transform:translateY(-10px);pointer-events:none;transition:.3s;box-shadow:0 24px 60px rgba(0,0,0,.5)}
+.mobile-panel.open{opacity:1;transform:none;pointer-events:auto}
+.mobile-panel a{display:flex;align-items:center;gap:12px;padding:13px 15px;border-radius:12px;color:#fff;text-decoration:none;font-weight:600;transition:.2s}
+.mobile-panel a:hover,.mobile-panel a.active{background:rgba(69,185,255,.1);color:var(--sk)}
+.mobile-panel a i{width:20px;text-align:center;color:var(--sk)}
+.side-nav a.active{color:var(--sk);background:rgba(69,185,255,.08);border-color:rgba(69,185,255,.3);box-shadow:inset 3px 0 0 var(--sk)}
+
+/* ⬅ نشانگر وضعیت همکاری (دایره کوچک رنگی) */
+/* ⬅ نقطه‌ی وضعیت — در فوتر و بج هیرو استفاده می‌شود */
+.status-dot{width:9px;height:9px;border-radius:50%;background:var(--st-c,var(--gr));box-shadow:0 0 0 4px var(--st-glow,rgba(61,220,151,.18));animation:stPulse 2s ease-in-out infinite;flex-shrink:0}
+@keyframes stPulse{50%{box-shadow:0 0 0 8px transparent}}
+body[data-avail="open"]{--st-c:#3ddc97;--st-bd:rgba(61,220,151,.4);--st-bg:rgba(61,220,151,.1);--st-glow:rgba(61,220,151,.18);--st-label:"آماده همکاری"}
+body[data-avail="busy-free"]{--st-c:#ff9f43;--st-bd:rgba(255,159,67,.4);--st-bg:rgba(255,159,67,.1);--st-glow:rgba(255,159,67,.18);--st-label:"درحال کار — وقت آزاد"}
+body[data-avail="busy"]{--st-c:#ff5252;--st-bd:rgba(255,82,82,.4);--st-bg:rgba(255,82,82,.1);--st-glow:rgba(255,82,82,.18);--st-label:"مشغول — ظرفیت جدید ندارم"}
+
+.side-toggle{display:none}
+
+.hero{position:relative;padding:44px 0 30px;overflow:hidden}
+.hero-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0}
+
+/* ═══ سیستم انیمیشن reveal ═══ */
+html.js .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s cubic-bezier(.2,.7,.25,1),transform .7s cubic-bezier(.2,.7,.25,1)}
+html.js .reveal.in{opacity:1;transform:none}
+html.js .reveal.d1{transition-delay:.1s}
+html.js .reveal.d2{transition-delay:.22s}
+html.js .reveal.d3{transition-delay:.34s}
+/* وقتی GSAP فعال است، سیستم reveal قدیمی خنثی می‌شود — انیمیشن ورود را GSAP اجرا می‌کند */
+html.gsap .reveal{opacity:1;transform:none;transition:none}
+@media (prefers-reduced-motion:reduce){html.js .reveal{opacity:1!important;transform:none!important;transition:none!important}}
+
+/* انیمیشن‌های اضافی */
+@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes glowPulse{0%,100%{box-shadow:0 0 0 0 rgba(69,185,255,.4)}50%{box-shadow:0 0 0 12px rgba(69,185,255,0)}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes borderFlow{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+@keyframes wobble{0%,100%{transform:rotate(0)}25%{transform:rotate(-3deg)}75%{transform:rotate(3deg)}}
+@keyframes slideUpIn{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:none}}
+@keyframes scaleIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:none}}
+
+/* افکت هاور برای کارت‌های تماس */
+.c-card:hover .c-ic{animation:wobble .5s ease-in-out}
+/* انیمیشن شناور روی آواتار هیرو — با translate تا با هاور/gsap تداخل نکند */
+@keyframes secFloat{0%,100%{translate:0 0}50%{translate:0 -4px}}
+/* افکت موج‌دار روی تایتل بخش‌ها */
+.sec-head h2{background:linear-gradient(90deg,#fff 0%,var(--sk) 50%,#fff 100%);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 8s linear infinite}
+body.light .sec-head h2{background:linear-gradient(90deg,#17233c 0%,var(--sk) 50%,#17233c 100%);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+/* ⬅ خط آبی کنار تیتر بخش‌ها — همیشه آرام بالا-پایین می‌ره (حدود ۴px) + موج نور داخلش */
+.sec-bar{position:relative;overflow:hidden;animation:secBob 3s ease-in-out infinite}
+.sec-bar::after{content:"";position:absolute;left:0;right:0;height:46%;top:-50%;background:linear-gradient(180deg,transparent,rgba(255,255,255,.6),transparent);animation:secShine 3s ease-in-out infinite}
+@keyframes secBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes secShine{0%{top:-50%}55%,100%{top:110%}}
+/* افکت ماتریکس روی تگ‌های مهارت */
+.skill-pill{transition:transform .25s,border-color .25s,background .25s}
+.skill-pill:hover{transform:translateY(-4px) scale(1.05);box-shadow:0 12px 28px rgba(0,0,0,.3),0 0 0 1px var(--sk)}
+/* انیمیشن کارت ارزش‌ها */
+.value-card{transition:transform .3s,border-color .3s,background .3s}
+.value-card:hover{transform:translateY(-8px) rotate(-1deg)}
+/* نوار اسکرول متحرک */
+.scroll-progress{transition:width .15s ease-out}
+/* افکت پالس روی آیتم‌های تایم‌لاین */
+.tl-item{transition:transform .3s}
+.tl-item:hover{transform:translateX(-6px)}
+.tl-item:hover .tl-dot{transform:scale(1.2) rotate(15deg)}
+.tl-dot{transition:transform .3s}
+/* افکت روی دکمه‌های n-bar */
+.side-nav a{position:relative;overflow:hidden}
+.side-nav a::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(69,185,255,.12),transparent);transform:translateX(100%);transition:transform .5s}
+.side-nav a:hover::after{transform:translateX(-100%)}
+html[dir="ltr"] .side-nav a::after{transform:translateX(-100%)}
+html[dir="ltr"] .side-nav a:hover::after{transform:translateX(100%)}
+.hero-grid{position:relative;z-index:1;display:grid;grid-template-columns:1fr;gap:30px;align-items:center}
+.kicker{display:inline-flex;align-items:center;gap:8px;padding:7px 15px;border-radius:50px;background:rgba(69,185,255,.09);border:1px solid rgba(69,185,255,.32);color:var(--sk);font-size:.8rem;font-weight:700;max-width:100%}
+.hero h1{font-size:2rem;font-weight:900;line-height:1.5;margin:16px 0 6px}
+.hero h1 .hl{color:var(--sk);text-shadow:0 0 30px rgba(69,185,255,.4)}
+.typer-line{font-size:1.05rem;font-weight:700;color:#dfe6f5;min-height:2.2rem}
+.typer-line .typer{color:var(--sk)}
+.caret{display:inline-block;width:2.5px;height:1.1em;background:var(--sk);vertical-align:-.18em;margin-inline-start:3px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.lead{color:var(--text-secondary);font-size:.95rem;margin-top:10px;max-width:32rem}
+.lead b{color:var(--sk);font-weight:700}
+
+.hero-visual{position:relative;max-width:380px;margin:6px auto 0}
+/* ⬅ نشانگر وضعیت کوچک — بج روی گوشه‌ی ترمینال هیرو */
+.hero-status{position:absolute;top:-9px;right:-9px;z-index:5;width:18px;height:18px;border-radius:50%;border:3px solid var(--bg-primary);background:var(--st-c,var(--gr));box-shadow:0 0 0 4px var(--st-glow,rgba(61,220,151,.22)),0 4px 12px rgba(0,0,0,.35);animation:hsPulse 2.4s ease-in-out infinite,secFloat 4.5s ease-in-out infinite;cursor:pointer;transition:transform .2s}
+.hero-status:hover{transform:scale(1.15)}
+.hero-status::after{content:attr(data-st-text);position:absolute;top:50%;right:calc(100% + 10px);transform:translateY(-50%);background:var(--bg-secondary);color:var(--st-c,var(--gr));border:1px solid var(--st-bd,rgba(61,220,151,.4));font-size:.7rem;font-weight:800;padding:4px 10px;border-radius:50px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s;box-shadow:0 6px 20px rgba(0,0,0,.35);z-index:6}
+.hero-status:hover::after{opacity:1}
+@keyframes hsPulse{50%{box-shadow:0 0 0 8px transparent,0 4px 12px rgba(0,0,0,.35)}}
+/* ═══ ترمینال هیرو — کارت معرفی JSON ═══ */
+.hero-term{position:relative;direction:ltr;text-align:left;font-family:var(--font-fira);background:#0b0f18;border:1px solid var(--border-color);border-radius:18px;overflow:hidden;box-shadow:0 0 0 1px rgba(69,185,255,.14),0 30px 70px -22px rgba(0,0,0,.65);transition:border-color .3s,box-shadow .3s}
+.hero-term::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:0;background:radial-gradient(420px 190px at 85% -12%,rgba(69,185,255,.1),transparent 62%)}
+.hero-term:hover{border-color:rgba(69,185,255,.35);box-shadow:0 0 0 1px rgba(69,185,255,.28),0 34px 80px -22px rgba(0,0,0,.7),0 0 44px -10px rgba(69,185,255,.2)}
+.ht-head{display:flex;align-items:center;gap:7px;padding:10px 14px;background:#1a1f2c;border-bottom:1px solid var(--border-color)}
+.ht-head .dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex-shrink:0}
+.ht-head .dot.r{background:#ff5b5b}.ht-head .dot.y{background:#ffb13b}.ht-head .dot.g{background:#2dd47a}
+.ht-title{flex:1;min-width:0;font-size:.7rem;font-weight:700;color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.3px}
+.ht-copy{width:26px;height:26px;border-radius:8px;border:1px solid var(--border-color);background:transparent;color:var(--text-secondary);cursor:pointer;font-size:.7rem;display:grid;place-items:center;transition:.2s;flex-shrink:0}
+.ht-copy:hover{color:var(--sk);border-color:rgba(69,185,255,.45);background:rgba(69,185,255,.08)}
+.ht-body{position:relative;z-index:1;padding:16px 18px 14px;font-size:.78rem;line-height:2.05;color:#dfe6f5}
+.ht-line{display:block;white-space:pre;transition:opacity .4s cubic-bezier(.2,.7,.25,1),transform .4s cubic-bezier(.2,.7,.25,1)}
+.ht-line.wrap{white-space:pre-wrap;word-break:break-word}
+.ht-line.ht-hide{opacity:0;transform:translateY(10px)}
+.c-p{color:#5c7099}.c-k{color:var(--sk)}.c-s{color:var(--gr)}.c-n{color:var(--or)}.c-g{color:var(--gr)}.c-cmd{color:#fff;font-weight:700}.c-path{color:var(--sk-strong)}
+.ht-st{display:inline-flex;align-items:center;gap:7px}
+.ht-st::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--gr);box-shadow:0 0 0 3px rgba(61,220,151,.16);animation:stPulse 2s ease-in-out infinite;flex-shrink:0}
+.ht-caret{display:inline-block;width:9px;height:1.05em;background:var(--sk);border-radius:2px;vertical-align:-.15em;margin-left:4px;animation:blink 1s steps(1) infinite;box-shadow:0 0 12px rgba(69,185,255,.6)}
+.ht-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 14px;border-top:1px solid var(--border-color);font-size:.64rem;color:var(--text-secondary);position:relative;z-index:1}
+.ht-live{display:inline-flex;align-items:center;gap:6px;color:var(--gr);font-weight:800;letter-spacing:.5px}
+.ht-live::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--gr);animation:stPulse 2s ease-in-out infinite}
+.ht-api{font-size:.62rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body.light .hero-term{background:#1a1f2c;border-color:#273046}
+body.light .ht-head{background:#232a3a}
+
+.sec{padding:44px 0 8px}
+.sec-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:24px}
+.sec-bar{width:4.5px;border-radius:6px;align-self:stretch;min-height:48px;background:linear-gradient(180deg,var(--sk),var(--pu));box-shadow:0 0 20px rgba(69,185,255,.5);flex-shrink:0}
+/* ⬅ تگ بخش‌ها — فقط فونت خوشگل، بدون باکس */
+.sec-tag{font-family:"JetBrains Mono",var(--font-fira);font-size:.82rem;font-weight:700;color:var(--sk);direction:ltr;display:inline-block;letter-spacing:1px;opacity:.85;text-transform:none}
+.sec-head h2{font-size:1.55rem;font-weight:900;margin-top:2px}
+.sec-sub{color:var(--text-secondary);font-size:.9rem;margin-top:4px;max-width:38rem}
+
+/* ═══ بخش مهارت‌ها — گرید ۳ ستونی با کارت و توضیح هاور ═══ */
+.skills-wrap{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:920px;width:100%}
+@media (max-width:680px){.skills-wrap{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:480px){.skills-wrap{grid-template-columns:1fr}}
+.skill-pill{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:14px 16px;border-radius:14px;cursor:pointer;background:var(--bg-secondary);border:1px solid var(--border-color);color:#e6edf8;font-family:inherit;font-weight:700;font-size:.86rem;transition:.25s;-webkit-tap-highlight-color:transparent;min-height:80px}
+.skill-pill.extra{display:none}
+.skills-wrap.expanded .skill-pill.extra{display:flex}
+.skill-pill>i{font-size:1.4rem;color:var(--ic,#fff);width:auto;text-align:center}
+.skill-pill:hover,.skill-pill.open{border-color:var(--ic,var(--sk));transform:translateY(-3px);background:var(--bg-tertiary)}
+.skill-pill .s-name{font-size:.82rem;font-weight:700;line-height:1.4}
+.skill-pill .s-cat{font-size:.62rem;font-weight:600;color:var(--text-secondary);padding:2px 8px;border-radius:50px;background:rgba(255,255,255,.05);border:1px solid var(--border-color)}
+/* توضیح هاور */
+.skill-pill .tip{position:absolute;bottom:calc(100% + 10px);right:50%;transform:translateX(50%) translateY(8px);width:min(280px,86vw);background:#0b0f18;border:1px solid var(--border-color);border-radius:14px;padding:12px 14px;z-index:60;text-align:start;opacity:0;pointer-events:none;transition:.25s;box-shadow:0 22px 50px -12px rgba(0,0,0,.75);cursor:default;font-weight:400}
+.skill-pill:hover .tip,.skill-pill:focus-visible .tip,.skill-pill.open .tip{opacity:1;transform:translateX(50%) translateY(0)}
+.skill-pill .tip b{display:block;font-weight:800;font-size:.9rem;margin-bottom:2px}
+.skill-pill .tip .cat{display:inline-block;font-size:.66rem;font-weight:800;padding:2px 10px;border-radius:50px;margin-bottom:7px;background:rgba(69,185,255,.1);color:var(--sk);border:1px solid rgba(69,185,255,.3)}
+.skill-pill .tip .cat.be{background:rgba(61,220,151,.1);color:var(--gr);border-color:rgba(61,220,151,.3)}
+.skill-pill .tip .cat.tl{background:rgba(139,124,255,.1);color:var(--pu);border-color:rgba(139,124,255,.3)}
+.skill-pill .tip p{color:var(--text-secondary);font-size:.79rem;line-height:1.9;margin:0}
+.skills-more{margin-top:14px;margin-inline:auto;display:flex;align-items:center;justify-content:center;gap:9px;padding:11px 26px;border-radius:50px;cursor:pointer;background:linear-gradient(180deg,rgba(69,185,255,.12),rgba(139,124,255,.08));border:1px solid rgba(69,185,255,.42);color:var(--sk);font-family:inherit;font-weight:800;font-size:.86rem;transition:transform .25s,box-shadow .25s,border-color .25s,background .25s,color .25s;box-shadow:0 6px 20px rgba(69,185,255,.10)}
+.skills-more:hover{transform:translateY(-3px);border-color:var(--sk);box-shadow:0 14px 34px rgba(69,185,255,.30);background:rgba(69,185,255,.16);color:#061423}
+.skills-more:active{transform:translateY(-1px)}
+.skills-more i{transition:transform .3s}
+.skills-more.on i{transform:rotate(180deg)}
+
+/* ═══ بخش ارزش‌های من — ۳ ستون × ۲ ردیف (گرید) ═══ */
+/* 📝 برای بازگرداندن به حالت قبلی: تمام بلاک زیر (از values-list تا انتهای باکس‌ها) رو حذف کن و با این جایگزین کن:
+   .values-list{display:flex;flex-direction:column;gap:12px;max-width:720px}
+*/
+.values-list{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:920px;width:100%}
+@media (max-width:680px){.values-list{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:480px){.values-list{grid-template-columns:1fr}}
+.value-card{display:flex;flex-direction:column;gap:8px;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:16px;padding:14px 16px;transition:transform .3s,border-color .3s,background .3s;min-width:0}
+.value-card:hover{transform:translateY(-4px);border-color:rgba(69,185,255,.4);background:var(--bg-tertiary)}
+.value-card .v-txt{flex:1;min-width:0}
+.value-card h3{font-size:.95rem;font-weight:800;line-height:1.5}
+.value-card p{font-size:.78rem;color:var(--text-secondary);line-height:1.85;margin-top:2px}
+.value-card .v-ic{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;flex-shrink:0;font-size:.9rem;color:var(--ic,var(--sk));background:rgba(255,255,255,.05);border:1px solid color-mix(in srgb,var(--ic) 35%,transparent);transition:.3s}
+.value-card:hover .v-ic{background:color-mix(in srgb,var(--ic) 16%,transparent);box-shadow:0 0 18px color-mix(in srgb,var(--ic) 30%,transparent)}
+@keyframes valIn{from{opacity:0;transform:translateY(14px)}}
+html.js:not(.gsap) .values-list:not(.in) .value-card{opacity:0}
+html.js:not(.gsap) .values-list.in .value-card{animation:valIn .55s cubic-bezier(.2,.7,.25,1) backwards}
+html.js .values-list.in .value-card:nth-child(2){animation-delay:.07s}
+html.js .values-list.in .value-card:nth-child(3){animation-delay:.14s}
+html.js .values-list.in .value-card:nth-child(4){animation-delay:.21s}
+html.js .values-list.in .value-card:nth-child(5){animation-delay:.28s}
+html.js .values-list.in .value-card:nth-child(6){animation-delay:.35s}
+@media (max-width:560px){
+  .value-card{gap:10px;padding:14px}
+  .value-card h3{font-size:.92rem}
+  .value-card p{font-size:.76rem}
+  .value-card .v-ic{width:34px;height:34px;font-size:.85rem}
+}
+
+.filters{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:22px}
+.tech-btn{display:inline-flex;align-items:center;gap:8px;padding:9px 15px;border-radius:12px;cursor:pointer;background:transparent;border:1px solid var(--border-color);color:var(--text-secondary);font-family:inherit;font-weight:700;font-size:.85rem;transition:.25s}
+.tech-btn .en{font-family:var(--font-fira);font-size:.75rem}
+/* ⬅ هاور کششی جهت‌آگاه — فارسی (RTL): رنگ از راست به چپ می‌ریزد؛ انگلیسی (LTR): از چپ به راست */
+.tech-btn,.skills-more,.p-more{position:relative;overflow:hidden;isolation:isolate}
+.tech-btn::before,.skills-more::before,.p-more::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--swipe,var(--sk));transform:scaleX(0);transform-origin:right center;transition:transform .45s cubic-bezier(.33,0,.2,1)}
+html[dir="ltr"] .tech-btn::before,html[dir="ltr"] .skills-more::before,html[dir="ltr"] .p-more::before{transform-origin:left center}
+.tech-btn:hover::before,.tech-btn:focus-visible::before,.skills-more:hover::before,.skills-more:focus-visible::before,.p-more:hover::before,.p-more:focus-visible::before{transform:scaleX(1)}
+.tech-btn:hover,.tech-btn:focus-visible,.skills-more:hover,.skills-more:focus-visible,.p-more:hover,.p-more:focus-visible{color:#061423;border-color:var(--sk)}
+/* هاور برجسته — دکمه‌ها کمی بالا می‌آیند */
+.tech-btn:hover,.tech-btn:focus-visible,.p-more:hover,.p-more:focus-visible{transform:translateY(-3px);box-shadow:0 12px 26px rgba(69,185,255,.22)}
+.tech-btn:active,.p-more:active{transform:translateY(-1px)}
+.tech-btn.on{background:var(--sk);border-color:var(--sk);color:#061423}
+.p-index{border-top:1.5px solid var(--border-color);display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding-top:14px}
+@media (max-width:768px){.p-index{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:480px){.p-index{grid-template-columns:1fr}}
+@keyframes rowIn{from{opacity:0;transform:translateY(16px) scale(.95)}}
+html:not(.gsap) .armed .p-row{animation:rowIn .5s cubic-bezier(.2,.7,.25,1) backwards}
+/* ⬅ کارت‌های پروژه: باکس شیشه‌ای با هاور و tilt 3D */
+.p-row{position:relative;display:flex;flex-direction:column;gap:10px;width:100%;text-align:start;padding:18px 18px 16px;border:1px solid var(--border-color);border-radius:18px;background:linear-gradient(160deg,var(--bg-secondary),var(--bg-tertiary));cursor:pointer;font:inherit;color:#fff;transition:transform .25s cubic-bezier(.2,.7,.25,1),border-color .25s,box-shadow .25s;min-width:0;overflow:hidden;will-change:transform;transform-style:preserve-3d}
+.p-row::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--g1,var(--sk)),var(--g2,var(--pu)));opacity:0;transition:opacity .3s}
+.p-row::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at var(--mx,50%) var(--my,50%),color-mix(in srgb,var(--sk) 12%,transparent),transparent 70%);opacity:0;transition:opacity .3s;pointer-events:none}
+.p-row:hover{transform:translateY(-6px) scale(1.01);border-color:rgba(69,185,255,.4);box-shadow:0 18px 40px -10px rgba(0,0,0,.5),0 0 0 1px rgba(69,185,255,.2)}
+.p-row:hover::before{opacity:1}
+.p-row:hover::after{opacity:1}
+.p-row-top{display:flex;align-items:flex-start;gap:12px;width:100%}
+.p-idx{font-family:var(--font-fira);font-weight:700;font-size:1.4rem;color:transparent;-webkit-text-stroke:1px var(--sk);opacity:.5;direction:ltr;flex-shrink:0;line-height:1}
+.p-row:hover .p-idx{color:var(--sk);opacity:1}
+.p-title{font-size:1.05rem;font-weight:800;line-height:1.5;word-wrap:break-word;flex:1;min-width:0}
+.p-row:hover .p-title{color:var(--sk)}
+.p-short{display:block;font-size:.78rem;font-weight:500;color:var(--text-secondary);margin-top:4px;line-height:1.7}
+.p-cats{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto;padding-top:4px}
+.cat-chip{font-family:var(--font-fira);font-size:.66rem;padding:3px 10px;border-radius:50px;border:1px solid var(--border-color);color:var(--text-secondary);transition:.25s;white-space:nowrap;background:rgba(255,255,255,.03)}
+.cat-chip:hover{background:var(--sk);color:#061423;border-color:var(--sk)}
+.p-year{font-size:.7rem;font-weight:700;color:var(--text-secondary);white-space:nowrap;align-self:flex-start;background:rgba(255,255,255,.05);padding:3px 10px;border-radius:50px;border:1px solid var(--border-color)}
+.p-arrow{position:absolute;bottom:14px;inset-inline-end:14px;font-size:.85rem;color:var(--sk);opacity:0;transform:translateX(-8px);transition:.25s}
+.p-row:hover .p-arrow{opacity:1;transform:translateX(0)}
+html[dir="ltr"] .p-arrow{transform:translateX(8px) scaleX(-1)}
+html[dir="ltr"] .p-row:hover .p-arrow{transform:translateX(0) scaleX(-1)}
+.p-soon-tag,.p-embed-tag{display:inline-flex;align-items:center;gap:5px;font-size:.62rem;font-weight:800;border-radius:50px;padding:2px 8px;margin-inline-start:6px;vertical-align:middle}
+.p-soon-tag{color:var(--or);border:1px solid rgba(255,159,67,.4);background:rgba(255,159,67,.08)}
+.p-embed-tag{color:var(--gr);border:1px solid rgba(61,220,151,.4);background:rgba(61,220,151,.08)}
+/* ⬅ دکمه‌ی نمایش بیشتر/کمتر پروژه‌ها */
+.p-more{margin:18px auto 0;display:flex;align-items:center;gap:8px;padding:11px 26px;border-radius:14px;cursor:pointer;background:transparent;border:1px solid var(--border-color);color:var(--text-secondary);font-family:inherit;font-weight:700;font-size:.88rem;transition:.25s;justify-content:center}
+.p-more:hover{border-color:var(--sk)}
+.p-more i{transition:transform .3s}
+.p-more.on i{transform:rotate(180deg)}
+
+.modal,.site-modal{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;padding:12px}
+.modal.open,.site-modal.open{display:flex}
+
+/* ═══ Toast — پیام‌های شناور ═══ */
+.toasts{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:950;display:flex;flex-direction:column-reverse;gap:8px;align-items:center;pointer-events:none;max-width:min(92vw,440px)}
+.toast{display:flex;align-items:center;gap:10px;padding:11px 16px;border-radius:14px;background:var(--bg-secondary);border:1px solid var(--border-color);color:#fff;font-weight:700;font-size:.84rem;line-height:1.7;box-shadow:0 18px 44px rgba(0,0,0,.55);opacity:0;transform:translateY(14px) scale(.96);transition:opacity .32s,transform .32s;max-width:100%}
+.toast.show{opacity:1;transform:none}
+.toast.hide{opacity:0;transform:translateY(10px) scale(.96)}
+.toast i{font-size:1rem;flex-shrink:0}
+.toast.ok{border-color:rgba(61,220,151,.5)}
+.toast.ok i{color:var(--gr)}
+.toast.info{border-color:rgba(69,185,255,.5)}
+.toast.info i{color:var(--sk)}
+.toast.warn{border-color:rgba(255,159,67,.55)}
+.toast.warn i{color:var(--or)}
+.modal-back,.site-back{position:absolute;inset:0;background:rgba(6,10,18,.78);backdrop-filter:blur(7px)}
+.modal-card{position:relative;width:min(560px,100%);max-height:88vh;overflow:auto;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:20px;animation:pop .4s cubic-bezier(.2,.9,.3,1.15);box-shadow:0 40px 90px -20px rgba(0,0,0,.8)}
+@keyframes pop{from{opacity:0;transform:translateY(24px) scale(.96)}}
+.m-head{position:relative;height:130px;display:grid;place-items:center;background:linear-gradient(135deg,var(--g1,#45b9ff),var(--g2,#1b3a5c))}
+.m-head i{font-size:2.8rem;color:rgba(255,255,255,.95);filter:drop-shadow(0 14px 26px rgba(0,0,0,.45))}
+/* ⬅ دکمه ضربدر — بدون چرخش، با سایز بزرگ و خوانا */
+.x-btn{position:absolute;top:.8rem;inset-inline-end:.8rem;width:42px;height:42px;border-radius:12px;border:1.5px solid rgba(255,255,255,.28);cursor:pointer;background:rgba(255,255,255,.16);color:#fff;font-size:1.45rem;display:grid;place-items:center;transition:background .2s,color .2s,border-color .2s,box-shadow .2s;line-height:1}
+.x-btn:hover,.x-btn:active{background:#fff;color:#0b0f18;border-color:#fff;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+.x-btn:focus,.x-btn:focus-visible{outline:none}
+.x-btn i{font-size:1.45rem;line-height:1}
+/* ⬅ توی هدر site-modal دکمه‌ی X استاتیک باشه کنار «تب جدید» */
+.sf-head .x-btn{position:static;width:34px;height:34px;border-radius:9px;font-size:1.2rem}
+.sf-head .x-btn i{font-size:1.2rem}
+.m-body{padding:1.2rem 1.3rem 1.4rem}
+.m-meta{display:flex;flex-wrap:wrap;gap:.4rem 1.1rem;color:var(--text-secondary);font-size:.78rem;font-weight:600;margin-bottom:.4rem}
+.m-meta b{color:var(--sk)}
+.m-body h3{font-size:1.3rem;font-weight:900;word-wrap:break-word}
+.m-body>p{color:var(--text-secondary);font-size:.88rem;margin:.5rem 0 .9rem;line-height:2}
+.m-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1rem}
+.m-tags span{font-family:var(--font-fira);font-size:.7rem;border:1px solid var(--border-color);background:var(--bg-tertiary);padding:4px 11px;border-radius:50px;color:#dfe6f5}
+.m-actions{display:flex;flex-wrap:wrap;gap:8px}
+.mini-btn{display:inline-flex;align-items:center;gap:7px;padding:10px 16px;border-radius:12px;font-family:inherit;font-size:.82rem;font-weight:800;cursor:pointer;text-decoration:none;transition:.25s;background:transparent;border:1px solid var(--border-color);color:#fff}
+.mini-btn:hover{border-color:var(--sk);color:var(--sk)}
+.mini-btn.pri{background:var(--sk);border-color:var(--sk);color:#061423}
+.mini-btn.pri:hover{background:var(--sk-strong);color:#061423}
+
+.site-modal{z-index:210}
+.site-halo{position:absolute;width:94vw;height:80vh;border-radius:24px;background:rgba(69,185,255,.28);filter:blur(60px);pointer-events:none;animation:haloPulse 3.5s ease-in-out infinite}
+@keyframes haloPulse{50%{opacity:.65}}
+.site-frame{position:relative;display:flex;flex-direction:column;width:min(1000px,96vw);height:min(660px,86vh);background:#0b0f18;border:1px solid var(--border-color);border-radius:16px;overflow:hidden;box-shadow:0 0 0 1px rgba(69,185,255,.25),0 30px 90px rgba(0,0,0,.75);animation:pop .4s cubic-bezier(.2,.9,.3,1.15)}
+.sf-head{display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--bg-secondary);border-bottom:1px solid var(--border-color);flex-shrink:0}
+.sf-head .dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex-shrink:0}
+.sf-head .dot.r{background:#ff5b5b}
+.sf-head .dot.y{background:#ffb13b}
+.sf-head .dot.g{background:#2dd47a}
+.sf-title{flex:1;font-size:.78rem;font-weight:700;color:#dfe6f5;padding:0 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+/* ⬅ تب جدید: دکمه مستطیلی جدا کنار ضربدر */
+.sf-open{display:none;align-items:center;gap:6px;font-size:.72rem;font-weight:700;color:var(--text-secondary);text-decoration:none;padding:7px 14px;border-radius:11px;border:1px solid var(--border-color);background:transparent;transition:.2s;flex-shrink:0}
+.sf-open:hover{color:var(--sk);border-color:rgba(69,185,255,.45)}
+.sf-frame{flex:1;width:100%;border:0;background:#0b0f18;display:block}
+
+.about-wrap{max-width:680px}
+.timeline{position:relative;padding-inline-start:54px}
+.timeline::before{content:"";position:absolute;inset-block:10px;inset-inline-start:17px;width:2px;background:linear-gradient(180deg,var(--sk),var(--pu));opacity:.45;border-radius:2px}
+.tl-item{position:relative;padding-bottom:30px}
+.tl-item:last-child{padding-bottom:0}
+.tl-dot{position:absolute;inset-inline-start:-54px;top:0;width:36px;height:36px;border-radius:50%;background:var(--bg-primary);border:1.5px solid rgba(69,185,255,.4);display:grid;place-items:center;font-size:.8rem;color:var(--sk)}
+.tl-item.now .tl-dot{border-color:var(--sk);animation:tlPulse 2.2s ease-in-out infinite}
+@keyframes tlPulse{50%{box-shadow:0 0 0 8px rgba(69,185,255,.07)}}
+.tl-when{display:inline-block;font-size:.7rem;font-weight:800;color:var(--sk);background:rgba(69,185,255,.09);border:1px solid rgba(69,185,255,.28);border-radius:50px;padding:1px 11px;margin-bottom:7px}
+.tl-item h3{font-size:1.02rem;font-weight:800;line-height:1.7}
+.tl-item p{font-size:.85rem;color:var(--text-secondary);line-height:2;margin-top:3px}
+.about-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:42px auto 0;max-width:920px;width:100%;text-align:center}
+@media (max-width:640px){.about-stats{grid-template-columns:repeat(2,minmax(0,1fr));max-width:520px}}
+
+/* ═══ بهبودهای موبایل: تاچ هدف‌ها، فونت، فاصله ═══ */
+@media (max-width:640px){
+  body{font-size:.92rem;line-height:1.85}
+  .container{padding-inline:14px}
+  .hero{padding:30px 0 24px}
+  .hero h1{font-size:1.7rem;line-height:1.4}
+  .typer-line{font-size:.95rem;min-height:1.9rem}
+  .lead{font-size:.88rem;margin-top:8px}
+  .hero-visual{max-width:340px;margin:6px auto 0}
+  .hero-status{width:14px;height:14px;top:-7px;right:-7px;border-width:2px}
+  .ht-body{font-size:.7rem;padding:13px 14px;line-height:1.95}
+  .ht-title{font-size:.62rem}
+  .ht-foot{font-size:.58rem;padding:8px 12px}
+  .kicker{font-size:.72rem;padding:5px 12px}
+  .sec{padding-block:32px 8px}
+  .sec-head{margin-bottom:18px;gap:10px}
+  .sec-head h2{font-size:1.4rem}
+  .sec-sub{font-size:.82rem}
+  .sec-tag{font-size:.66rem}
+  .sec-bar{width:5px;height:30px;border-radius:3px}
+  /* تاچ هدف‌های بزرگ‌تر */
+  .burger,.brush-btn{width:44px;height:44px}
+  .mobile-panel a{padding:14px 16px;font-size:.95rem}
+  .skill-pill{padding:8px 14px;font-size:.8rem;gap:6px}
+  .skill-pill>i{font-size:1rem;width:18px}
+  .skills-more{padding:11px;font-size:.82rem}
+  .p-index{grid-template-columns:1fr;gap:12px;padding-top:10px}
+  .p-row{padding:14px}
+  .p-idx{font-size:1.2rem}
+  .p-title{font-size:.95rem}
+  .p-short{font-size:.74rem}
+  .p-year{font-size:.66rem;padding:2px 8px}
+  .cat-chip{font-size:.62rem;padding:2px 8px}
+  .filters{gap:6px;padding:8px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .tech-btn{padding:8px 12px;font-size:.78rem}
+  .tech-btn .en{font-size:.7rem}
+  /* کارت‌های تماس */
+  .contact-grid{gap:10px}
+  .c-card{padding:18px}
+  .c-ic{width:42px;height:42px;font-size:1.05rem}
+  .c-val{font-size:.95rem}
+  .c-btn{padding:8px 12px;font-size:.72rem}
+  /* تایم‌لاین */
+  .timeline{padding-inline-start:38px}
+  .timeline::before{inset-inline-start:12px}
+  .tl-dot{width:30px;height:30px;font-size:.72rem;inset-inline-start:-38px}
+  .tl-item h3{font-size:.95rem}
+  .tl-item p{font-size:.8rem}
+  .tl-when{font-size:.66rem;padding:1px 8px}
+  /* فوتر */
+  footer{padding:36px 0 18px}
+  .f-grid{grid-template-columns:1fr 1fr;gap:24px}
+  .f-brand{grid-column:1/-1}
+  .f-tag{font-size:.78rem}
+  .f-status-row{gap:8px}
+  .f-status,.f-loc{font-size:.68rem;padding:5px 10px}
+  .f-bottom{justify-content:center;text-align:center}
+  .f-copy,.f-built{font-size:.72rem;justify-content:center}
+  /* toast & dialog */
+  .modal-card{border-radius:18px}
+  .m-head{height:100px}
+  .m-head i{font-size:2.2rem}
+  .m-body{padding:1rem 1.1rem 1.2rem}
+  .m-body h3{font-size:1.15rem}
+  .mini-btn{padding:9px 14px;font-size:.78rem}
+  /* مدال ترمینال */
+  .term-win{height:min(380px,80vh)}
+  .term-out{font-size:.7rem;padding:10px 12px}
+  .term-row{padding:9px 12px}
+  #termIn{font-size:.74rem}
+  .term-hint{font-size:.62rem;padding:4px 8px}
+  /* بنر کوکی */
+    /* دکمه‌ی شناور ترمینال */
+  .term-fab{width:44px;height:44px;font-size:1rem;bottom:12px;inset-inline-end:12px}
+  .term-tip{font-size:.72rem;padding:8px 12px;bottom:64px;inset-inline-end:12px}
+  /* بنر PWA */
+  .pwa-install{bottom:64px;inset-inline-end:12px;padding:8px 12px;font-size:.74rem;gap:6px}
+  /* preloader */
+  .pre-term{width:min(280px,90vw)}
+  .pre-body{font-size:.7rem;padding:14px}
+  .pre-title{font-size:.64rem}
+  /* فرم‌ها و input‌ها */
+  .a-in{padding:11px 14px;font-size:.86rem}
+  .a-btn{padding:10px 16px;font-size:.82rem}
+  .a-lbl{font-size:.74rem}
+  /* settings panel */
+  .settings-panel{padding:14px;max-width:280px}
+  .sp-head b{font-size:.86rem}
+  .sp-modes button{padding:9px;font-size:.78rem}
+  .sp-swatch{width:28px;height:28px}
+  .sp-pdf{padding:10px;font-size:.8rem}
+  .brush-btn.wide{padding:10px;font-size:.82rem}
+  /* hero canvas (3D scene) */
+  .hero-canvas{opacity:.7}
+  /* شمارنده‌ها */
+  .about-stats .gcard{padding:18px 8px}
+  .about-stats .gcard b{font-size:1.5rem}
+  .about-stats .gcard span{font-size:.7rem}
+  /* دسته‌بندی پروژه‌ها */
+  .p-row-top{gap:10px}
+  .p-arrow{bottom:12px;inset-inline-end:12px}
+  /* avail-card */
+  .avail-card{padding:30px 20px;border-radius:18px}
+  .avail-card h2{font-size:1.3rem}
+  .avail-card p{font-size:.85rem}
+  .avail-btn{padding:12px 24px;font-size:.9rem}
+  /* ⬅ فوتر موبایل: همه‌چیز وسط‌چین */
+  .f-grid{text-align:center}
+  .f-brand{align-items:center}
+  .f-logo{justify-content:center}
+  .f-tag{margin-inline:auto}
+  .f-status-row{justify-content:center}
+  .f-col{align-items:center}
+  .f-col h4{justify-content:center}
+  .f-col a,.f-col button{justify-content:center;text-align:center}
+  .f-copy,.f-built{justify-content:center}
+}
+
+@media (max-width:380px){
+  .hero h1{font-size:1.45rem}
+  .hero-visual{max-width:300px}
+  .ht-body{font-size:.64rem}
+  .sec-head h2{font-size:1.25rem}
+  .f-grid{grid-template-columns:1fr}
+  .about-stats{grid-template-columns:1fr;max-width:280px}
+  .m-head{height:90px}
+  .m-head i{font-size:2rem}
+}
+
+/* حالت لمسی: کاهش افکت‌های هاور */
+@media (hover:none) and (pointer:coarse){
+  .p-row:hover{transform:translateY(-3px)}
+  .p-row:hover::after{opacity:0}
+  .c-card:hover .c-ic{animation:none}
+  .value-card:hover{transform:translateY(-4px) rotate(0)}
+}
+
+/* حالت تاریک برای پنل شخصی‌سازی روی موبایل */
+@media (max-width:920px){
+  .settings-panel{max-width:300px}
+}
+.about-stats .gcard{text-align:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:24px 10px;transition:.3s;min-width:0}
+.about-stats .gcard:hover{transform:translateY(-4px);background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.2)}
+.about-stats .gcard b{display:block;font-size:1.8rem;font-weight:900;color:var(--sk);line-height:1.5;text-shadow:0 0 26px rgba(69,185,255,.35)}
+.about-stats .gcard .g-ic{font-size:1.5rem}
+.about-stats .gcard span{font-size:.74rem;color:var(--text-secondary);font-weight:600}
+.about-stats .gcard .glist{display:flex;flex-direction:column;gap:1px;font-size:.76rem;color:#dfe6f5;font-weight:700;margin-top:4px}
+
+/* ═══ بنر وضعیت همکاری — رنگ‌بندی با پنل ادمین ═══ */
+.avail-card{position:relative;overflow:hidden;max-width:760px;margin-inline:auto;text-align:center;border:1px solid var(--av-bd,rgba(61,220,151,.35));border-radius:24px;padding:38px 26px;background:var(--av-bg,linear-gradient(160deg,rgba(61,220,151,.08),rgba(69,185,255,.05)));transition:border-color .4s,background .4s}
+.avail-card::before{content:"";position:absolute;width:260px;height:260px;border-radius:50%;background:var(--av-glow,rgba(61,220,151,.12));filter:blur(70px);top:-110px;inset-inline-start:50%;transform:translateX(50%);pointer-events:none;transition:background .4s}
+.avail-kicker{position:relative;display:inline-flex;align-items:center;gap:8px;font-size:.8rem;font-weight:800;color:var(--av-c,var(--gr))}
+.avail-dot{width:9px;height:9px;border-radius:50%;background:var(--av-c,var(--gr));box-shadow:0 0 0 4px var(--av-glow,rgba(61,220,151,.18));animation:avPulse 2s ease-in-out infinite}
+@keyframes avPulse{50%{box-shadow:0 0 0 8px transparent}}
+.avail-card h2{position:relative;font-size:clamp(1.4rem,3vw,1.9rem);font-weight:900;margin:10px 0 8px}
+.avail-card p{position:relative;color:var(--text-secondary);font-size:.92rem;max-width:34rem;margin:0 auto 22px;line-height:2.1}
+.avail-btn{position:relative;display:inline-flex;align-items:center;gap:10px;padding:14px 30px;border-radius:50px;border:none;background:linear-gradient(135deg,var(--av-c,var(--gr)),color-mix(in srgb,var(--av-c,var(--gr)) 70%,#000));color:#fff;font-family:inherit;font-weight:900;font-size:.95rem;cursor:pointer;transition:.25s;box-shadow:0 12px 30px -8px var(--av-c,var(--gr))}
+.avail-btn:hover{transform:translateY(-3px)}
+.avail-btn i{transition:transform .25s}
+.avail-btn:hover i{transform:translateX(-4px)}
+html[dir="ltr"] .avail-btn:hover i{transform:translateX(4px)}
+/* حالت‌ها */
+body[data-avail="open"]{--av-c:var(--gr);--av-bd:rgba(61,220,151,.35);--av-bg:linear-gradient(160deg,rgba(61,220,151,.08),rgba(69,185,255,.05));--av-glow:rgba(61,220,151,.12)}
+body[data-avail="busy-free"]{--av-c:var(--or);--av-bd:rgba(255,159,67,.35);--av-bg:linear-gradient(160deg,rgba(255,159,67,.08),rgba(69,185,255,.04));--av-glow:rgba(255,159,67,.12)}
+body[data-avail="busy"]{--av-c:var(--rd);--av-bd:rgba(255,82,82,.35);--av-bg:linear-gradient(160deg,rgba(255,82,82,.08),rgba(69,185,255,.04));--av-glow:rgba(255,82,82,.12)}
+
+/* ═══ تماس با من ═══ */
+.contact-head{text-align:center;margin-bottom:28px}
+.contact-head h2{font-size:clamp(1.6rem,3.4vw,2.2rem);font-weight:900}
+.contact-head p{color:var(--text-secondary);font-size:.92rem;max-width:30rem;margin:6px auto 0;line-height:2.1}
+.contact-grid{display:grid;grid-template-columns:1fr;gap:16px;max-width:880px;margin-inline:auto;margin-bottom:40px}
+@media (min-width:700px){.contact-grid{grid-template-columns:repeat(3,1fr)}}
+.c-card{position:relative;overflow:hidden;text-align:start;display:block;background:var(--cc-bg);border:1px solid var(--cc-bd);border-radius:20px;padding:22px;cursor:pointer;transition:transform .3s,border-color .3s,background .3s;min-width:0;text-decoration:none}
+.c-card:hover{transform:translateY(-5px);border-color:var(--cc);background:var(--cc-bg-hover);box-shadow:0 20px 44px rgba(0,0,0,.22)}
+.c-arrow{position:absolute;top:16px;inset-inline-start:16px;width:30px;height:30px;border-radius:10px;display:grid;place-items:center;font-size:.8rem;color:var(--cc);background:color-mix(in srgb,var(--cc) 12%,transparent);border:1px solid color-mix(in srgb,var(--cc) 30%,transparent);opacity:0;transform:translate(8px,-8px);transition:.3s}
+.c-card:hover .c-arrow{opacity:1;transform:none}
+.c-ic{width:52px;height:52px;border-radius:15px;display:grid;place-items:center;font-size:1.25rem;color:#fff;background:var(--cc);box-shadow:0 10px 26px -8px var(--cc)}
+.c-lbl{display:block;font-size:.72rem;font-weight:700;color:var(--text-secondary);margin-top:18px}
+.c-val{display:block;font-family:var(--font-fira);font-size:1.08rem;font-weight:700;margin-top:4px;overflow-wrap:anywhere;color:#fff;letter-spacing:.5px;text-shadow:0 0 18px rgba(255,255,255,.12)}
+.c-btns{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+.c-btn{display:inline-flex;align-items:center;gap:7px;padding:9px 15px;border-radius:11px;border:1px solid color-mix(in srgb,var(--cc) 40%,transparent);background:transparent;color:var(--cc);font-family:inherit;font-size:.75rem;font-weight:800;cursor:pointer;transition:.2s}
+.c-btn:hover{background:var(--cc);color:#0b0f18}
+.c-btn.solid{background:var(--cc);color:#0b0f18;border-color:var(--cc)}
+.c-btn.solid:hover{filter:brightness(1.1)}
+body.light .c-val{color:#17233c}
+body.light .c-card[data-cc="green"]{background:rgba(61,220,151,.08);border-color:rgba(61,220,151,.35)}
+body.light .c-card[data-cc="blue"]{background:rgba(69,185,255,.08);border-color:rgba(69,185,255,.35)}
+body.light .c-card[data-cc="purple"]{background:rgba(139,124,255,.08);border-color:rgba(139,124,255,.35)}
+body.light .c-card:hover{filter:brightness(.98)}
+body.light .c-arrow{background:#fff}
+
+.brush-btn{width:42px;height:42px;border-radius:12px;border:1px solid var(--border-color);background:var(--bg-secondary);color:var(--text-secondary);cursor:pointer;display:grid;place-items:center;font-size:1rem;transition:.25s;flex-shrink:0}
+.brush-btn:hover{color:var(--sk);border-color:rgba(69,185,255,.45);transform:translateY(-2px)}
+.brush-btn.wide{width:100%;height:auto;padding:11px;gap:8px;border-radius:12px;font-family:inherit;font-weight:700;font-size:.86rem;display:flex;align-items:center;justify-content:center}
+.settings-panel{position:fixed;top:calc(var(--topbar-h) + 6px);left:12px;right:12px;z-index:220;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:18px;padding:16px;box-shadow:0 24px 60px rgba(0,0,0,.5);opacity:0;visibility:hidden;transform:translateY(-10px);transition:.3s;max-width:300px;margin-inline:auto}
+.settings-panel.open{opacity:1;visibility:visible;transform:none}
+.sp-head{display:flex;justify-content:space-between;align-items:center}
+.sp-head b{font-size:.92rem}
+.sp-close{background:none;border:none;color:var(--text-secondary);cursor:pointer;font-size:1rem}
+.sp-label{font-size:.78rem;color:var(--text-secondary);margin:13px 0 7px;font-weight:700}
+.sp-modes{display:flex;gap:8px}
+.sp-modes button{flex:1;padding:8px;border-radius:10px;border:1px solid var(--border-color);background:transparent;color:var(--text-secondary);font-family:inherit;font-weight:700;font-size:.82rem;cursor:pointer;transition:.2s}
+.sp-modes button.active{background:var(--sk);border-color:var(--sk);color:#061423}
+.sp-colors{display:flex;gap:9px;flex-wrap:wrap}
+.sp-swatch{width:29px;height:29px;border-radius:50%;border:none;cursor:pointer;transition:.2s}
+.sp-swatch:hover{transform:scale(1.15)}
+.sp-swatch.active{outline:2px solid var(--text-secondary);outline-offset:3px}
+.sp-pdf{margin-top:14px}
+
+body.light{--bg-primary:#f2f6fc;--bg-secondary:#ffffff;--bg-tertiary:#e9eff8;--border-color:#d8e2f0;--text-secondary:#5b6b86;color:#17233c}
+body.light ::-webkit-scrollbar-track{background:#f2f6fc}
+body.light ::-webkit-scrollbar-thumb{background:#c5d2e4}
+body.light .topbar{background:rgba(255,255,255,.92)}
+body.light .mobile-panel{background:rgba(255,255,255,.97)}
+body.light .side-logo,body.light .mobile-panel a,body.light .p-row,body.light .mini-btn:not(.pri),body.light .toast,body.light .skill-pill,body.light .typer-line,body.light .btn:not(.solid){color:#17233c}
+body.light .burger span{background:#17233c}
+body.light .side-toggle span{background:#17233c}
+body.light .p-idx{-webkit-text-stroke-color:#17233c}
+body.light .cat-chip:hover{background:#17233c;color:#fff;border-color:#17233c}
+body.light .tech-btn::before,body.light .skills-more::before,body.light .p-more::before{background:#17233c}
+body.light .tech-btn:hover,body.light .tech-btn:focus-visible,body.light .skills-more:hover,body.light .skills-more:focus-visible,body.light .p-more:hover,body.light .p-more:focus-visible{color:#fff;border-color:#17233c}
+body.light .about-stats .gcard{background:rgba(23,35,60,.045);border-color:rgba(23,35,60,.12)}
+body.light .about-stats .gcard .glist{color:#17233c}
+body.light .value-card{background:#fff;border-color:#d8e2f0}
+body.light .value-card:hover{background:#f4f8fe}
+body.light .value-card p{color:#5b6b86}
+body.light .skill-pill .tip{color:#dfe6f5;border-color:#273046}
+body.light .sf-title{color:#17233c}
+body.light .preloader{background:rgba(242,246,252,.95)}
+body.light .avail-card{filter:none}
+/* ⬅ تم روشن کامل: تمام بخش‌های تیره‌ی باقی‌مانده */
+body.light .sidebar{background:rgba(255,255,255,.7);color:#17233c}
+body.light .side-nav a{color:#5b6b86}
+body.light .side-nav a:hover{background:#fff;border-color:#d8e2f0;color:#17233c}
+body.light .side-nav a.active{color:var(--sk);background:rgba(69,185,255,.08);border-color:rgba(69,185,255,.3)}
+body.light .side-socials a{background:#fff;border-color:#d8e2f0;color:#5b6b86}
+body.light .side-socials a:hover{color:var(--sk);border-color:rgba(69,185,255,.4)}
+body.light .side-ver{color:#5b6b86}
+body.light .brush-btn{background:#fff;color:#5b6b86}
+body.light .brush-btn:hover{color:var(--sk);border-color:rgba(69,185,255,.45)}
+body.light .burger{background:#fff}
+body.light .side-toggle{background:#fff}
+body.light .settings-panel{background:#fff;color:#17233c}
+body.light .sp-head b,body.light .sp-label{color:#17233c}
+body.light .sp-modes button,body.light .a-btn{color:#5b6b86}
+body.light .sp-modes button.active{color:#061423}
+body.light .term-win{background:#1a1f2c}
+body.light .term-out{color:#c5cee0}
+body.light .term-row{background:rgba(255,255,255,.05)}
+body.light .p-row{background:rgba(255,255,255,.55);border-color:#d8e2f0}
+body.light .p-row:hover{background:#fff;border-color:rgba(69,185,255,.35)}
+body.light .p-short,body.light .m-meta,body.light .m-body>p{color:#5b6b86}
+body.light .sec-tag{color:var(--sk)}
+body.light .sec-sub{color:#5b6b86}
+body.light .filters{background:rgba(255,255,255,.55)}
+body.light .cat-chip,body.light .tech-btn{background:rgba(255,255,255,.55);border-color:#d8e2f0;color:#5b6b86}
+body.light .skills-more{background:rgba(255,255,255,.55);border-color:#d8e2f0;color:#17233c}
+body.light .skills-more:hover{background:#17233c;color:#fff;border-color:#17233c}
+body.light .modal-card{background:#fff;color:#17233c}
+body.light .m-tags span{background:#f4f8fe;border-color:#d8e2f0;color:#17233c}
+body.light .toast{background:#fff;color:#17233c;border-color:#d8e2f0}
+body.light .pre-head{background:#f4f8fe}
+body.light .pre-term{background:#fff;border-color:#d8e2f0}
+body.light .pre-body{color:#17233c}
+body.light .pre-line.dim{color:#5b6b86}
+body.light .pre-bar{background:#d8e2f0}
+body.light .p-soon-tag{color:#c47a00;border-color:rgba(255,159,67,.35);background:rgba(255,159,67,.1)}
+body.light .p-embed-tag{color:#1a8a55;border-color:rgba(61,220,151,.35);background:rgba(61,220,151,.1)}
+body.light .c-btn{color:var(--cc)}
+body.light .mini-btn:not(.pri){background:rgba(255,255,255,.55);border-color:#d8e2f0;color:#17233c}
+body.light .mini-btn.pri{color:#061423}
+body.light .lg-head b,body.light .afFields label{color:#17233c}
+body.light .lg-head span{color:#5b6b86}
+body.light .term-hint{color:#5b6b86;border-color:#d8e2f0}
+body.light footer,body.light .soc a{color:#5b6b86}
+body.light .soc a{background:#fff;border-color:#d8e2f0}
+body.light .soc a:hover{color:var(--sk);border-color:rgba(69,185,255,.4)}
+body.light .a-side{background:#fff}
+body.light .a-tab.on{color:#061423}
+body.light .a-btn.pri{color:#061423}
+body.light .v-bar{background:linear-gradient(180deg,var(--sk),var(--pu))}
+
+.scroll-progress{position:fixed;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,var(--sk),var(--pu));z-index:500;box-shadow:0 0 12px rgba(69,185,255,.6)}
+/* ⬅ وقتی پنل شخصی‌سازی بازه، دکمه‌ی side-toggle مخفی شه */
+body.settings-open .side-toggle{opacity:0;pointer-events:none;transform:scale(.8)}
+.pwa-install{position:fixed;bottom:80px;inset-inline-end:16px;z-index:240;display:none;align-items:center;gap:10px;padding:10px 16px;border-radius:14px;border:1px solid rgba(69,185,255,.5);background:rgba(15,20,30,.96);backdrop-filter:blur(14px);color:#fff;font-family:inherit;font-weight:800;font-size:.82rem;cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,.4),0 0 24px rgba(69,185,255,.25);animation:pwaIn .4s cubic-bezier(.2,.7,.25,1)}
+.pwa-install.show{display:inline-flex}
+.pwa-install:hover{background:var(--sk);color:#061423;border-color:var(--sk);transform:translateY(-2px)}
+.pwa-install i{font-size:1rem}
+.pwa-install .pwa-x{margin-inline-start:6px;padding:2px 6px;border-radius:6px;background:rgba(255,255,255,.12);font-size:.65rem;font-weight:700}
+.pwa-install:hover .pwa-x{background:rgba(6,20,35,.2)}
+@keyframes pwaIn{from{opacity:0;transform:translateY(20px) scale(.9)}}
+.preloader{position:fixed;inset:0;z-index:999;background:rgba(15,20,30,.97);display:grid;place-items:center;transition:opacity .5s ease}
+.preloader.done{opacity:0;pointer-events:none}
+.pre-term{width:min(330px,88vw);background:#0b0f18;border:1px solid var(--border-color);border-radius:14px;overflow:hidden;direction:ltr;text-align:left;box-shadow:0 30px 80px -20px rgba(0,0,0,.8)}
+.pre-head{display:flex;align-items:center;gap:7px;padding:9px 12px;background:#1a1f2c;border-bottom:1px solid var(--border-color)}
+.pre-head .dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex-shrink:0}
+.pre-head .dot.r{background:#ff5b5b}
+.pre-head .dot.y{background:#ffb13b}
+.pre-head .dot.g{background:#2dd47a}
+.pre-title{font-family:var(--font-fira);font-size:.68rem;color:var(--text-secondary);margin-left:8px}
+.pre-body{padding:16px;font-family:var(--font-fira);font-size:.75rem;line-height:2.2;color:#d6deeb}
+.pre-prompt{color:var(--gr);margin-right:5px}
+.pre-line.dim{color:#5c7099}
+.pre-bar{height:5px;border-radius:6px;background:#1d2434;overflow:hidden;margin:10px 0}
+.pre-bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--sk),var(--pu));animation:preFill 1.2s ease forwards}
+@keyframes preFill{to{width:100%}}
+
+/* ═══ ترمینال + بابل پیام ═══ */
+.term-fab{position:fixed;bottom:16px;inset-inline-end:16px;z-index:210;width:48px;height:48px;border-radius:14px;border:1px solid var(--border-color);background:var(--bg-secondary);color:var(--sk);font-size:1.05rem;cursor:pointer;transition:.25s;box-shadow:0 12px 30px rgba(0,0,0,.4)}
+.term-fab:hover{transform:translateY(-3px);border-color:rgba(69,185,255,.5)}
+/* بابل پیام با فلش */
+.term-tip{position:fixed;bottom:74px;inset-inline-end:16px;z-index:212;display:none;align-items:center;gap:8px;background:var(--sk);color:#061423;font-weight:800;font-size:.78rem;padding:10px 15px;border-radius:14px;box-shadow:0 14px 34px rgba(0,0,0,.45);animation:tipIn .4s cubic-bezier(.2,.9,.3,1.2)}
+.term-tip.show{display:inline-flex}
+.term-tip::after{content:"";position:absolute;bottom:-8px;inset-inline-end:20px;width:16px;height:16px;background:var(--sk);transform:rotate(45deg);border-radius:3px}
+.term-tip i{font-size:.8rem;animation:tipArrow 1s ease-in-out infinite}
+@keyframes tipArrow{50%{transform:translateY(3px)}}
+@keyframes tipIn{from{opacity:0;transform:translateY(10px) scale(.9)}}
+.term-modal{position:fixed;inset:0;z-index:230;display:none;align-items:flex-end;justify-content:center;padding:10px}
+.term-modal.open{display:flex}
+.term-win{position:relative;width:100%;max-width:600px;height:min(430px,80vh);background:#0b0f18;border:1px solid var(--border-color);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;direction:ltr;text-align:left;box-shadow:0 30px 90px rgba(0,0,0,.75);animation:pop .35s cubic-bezier(.2,.9,.3,1.15);transition:border-color .3s,box-shadow .3s}
+.term-head{display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--bg-secondary);border-bottom:1px solid var(--border-color);flex-shrink:0;flex-direction:row}
+.term-head .dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex-shrink:0}
+.term-head .dot.r{background:#ff5b5b}
+.term-head .dot.y{background:#ffb13b}
+.term-head .dot.g{background:#2dd47a}
+.term-head .term-title{font-family:var(--font-fira);font-size:.68rem;color:var(--text-secondary);margin:0 8px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:right;direction:ltr}
+.term-hint{font-family:var(--font-fira);font-size:.66rem;color:var(--text-secondary);cursor:pointer;border:1px solid var(--border-color);background:transparent;border-radius:8px;padding:5px 10px;flex-shrink:0;transition:.2s;font-weight:700}
+.term-hint:hover{color:var(--sk);border-color:rgba(69,185,255,.5);background:rgba(69,185,255,.06)}
+.term-out{flex:1;overflow-y:auto;padding:12px 14px;font-family:var(--font-fira);font-size:.72rem;line-height:2;color:#d6deeb;white-space:pre-wrap;word-break:break-word;position:relative;z-index:1}
+/* ⬅ خط کد فعال با $ داخل خروجی */
+.term-out .live-cmd{color:#fff;font-weight:700}
+.term-out .live-cmd::before{content:"$ ";color:var(--gr)}
+.term-out .cmd{color:#5c7099}
+.term-out .ok{color:var(--gr)}
+.term-out .err{color:#ff7b72}
+.term-out .dim{color:#5c7099}
+.term-row{display:flex;align-items:center;gap:8px;padding:11px 14px;border-top:1px solid var(--border-color);background:var(--bg-secondary)}
+.term-ps{color:var(--gr);font-family:var(--font-fira);font-weight:700;flex-shrink:0}
+#termIn{flex:1;background:transparent;border:none;outline:none;color:#fff;font-family:var(--font-fira);font-size:.78rem;min-width:0}
+.term-win::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:2;background:repeating-linear-gradient(0deg,rgba(255,255,255,.03) 0 1px,transparent 1px 3px);animation:crt 6s linear infinite}
+@keyframes crt{0%,100%{opacity:1}50%{opacity:.82}}
+.term-win.term-red{border-color:var(--rd);box-shadow:0 0 45px rgba(255,60,60,.4),0 30px 90px rgba(0,0,0,.75)}
+.term-win.term-red::after{background:repeating-linear-gradient(0deg,rgba(255,60,60,.06) 0 1px,transparent 1px 3px)}
+.term-win.term-red .term-out{color:#ffb3b3}
+.term-win.term-red .term-out .ok{color:var(--rd)}
+.term-win.term-red .term-out .dim{color:#c96a6a}
+.term-win.term-red .term-ps{color:var(--rd)}
+body.shake{animation:shake .55s}
+@keyframes shake{10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(3px)}30%,50%,70%{transform:translateX(-5px)}40%,60%{transform:translateX(5px)}}
+
+.code-rain{position:fixed;inset:0;z-index:300;pointer-events:none;overflow:hidden}
+.code-rain span{position:absolute;top:-50px;animation:crFall linear forwards}
+@keyframes crFall{to{transform:translateY(115vh) rotate(24deg);opacity:0}}
+
+/* ⬅ z-index برای مودال‌های ادمین — باید بالاتر از پنل ادمین باشن */
+#loginModal{z-index:640}
+#afModal{z-index:650}
+
+.admin{position:fixed;inset:0;z-index:600;background:var(--bg-primary);display:none;flex-direction:column}
+.admin.open{display:flex}
+.a-top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;background:var(--bg-secondary);border-bottom:1px solid var(--border-color);flex-shrink:0;flex-wrap:wrap}
+.a-brand{display:flex;align-items:center;gap:10px;font-weight:900;font-size:.95rem}
+.a-brand i{color:var(--sk)}
+.a-brand small{display:block;font-size:.66rem;font-weight:600;color:var(--text-secondary)}
+.a-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.a-btn{display:inline-flex;align-items:center;gap:7px;padding:9px 15px;border-radius:11px;border:1px solid var(--border-color);background:transparent;color:var(--text-secondary);font-family:inherit;font-weight:700;font-size:.8rem;cursor:pointer;transition:.2s}
+.a-btn:hover{color:var(--sk);border-color:rgba(69,185,255,.45)}
+.a-btn.pri{background:var(--sk);border-color:var(--sk);color:#061423}
+.a-btn.pri:hover{background:var(--sk-strong);color:#061423}
+.a-btn.danger{color:var(--rd);border-color:rgba(255,82,82,.4)}
+.a-btn.danger:hover{background:rgba(255,82,82,.12);color:var(--rd)}
+.a-btn b{background:rgba(0,0,0,.18);border-radius:50px;padding:1px 9px;font-size:.75rem}
+.a-btn.pri b{background:rgba(6,20,35,.2)}
+.a-body{flex:1;display:flex;flex-direction:column;min-height:0}
+.a-side{display:flex;gap:6px;padding:10px 12px;overflow-x:auto;border-bottom:1px solid var(--border-color);background:var(--bg-secondary);flex-shrink:0;scrollbar-width:none}
+.a-side::-webkit-scrollbar{display:none}
+.a-tab{display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border-radius:11px;border:1px solid transparent;background:transparent;color:var(--text-secondary);font-family:inherit;font-weight:700;font-size:.82rem;cursor:pointer;transition:.2s;white-space:nowrap}
+.a-tab:hover{color:#fff}
+.a-tab.on{background:var(--sk);color:#061423}
+.a-main{flex:1;overflow-y:auto;padding:16px 14px 90px;scrollbar-width:none;-ms-overflow-style:none}
+.a-main::-webkit-scrollbar{width:0;height:0}
+.a-pane{display:none;max-width:860px;margin-inline:auto}
+.a-pane.on{display:block;animation:paneIn .3s ease}
+@keyframes paneIn{from{opacity:0;transform:translateY(8px)}}
+.a-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:14px}
+.a-stat{background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:16px;padding:16px;text-align:center}
+.a-stat b{display:block;font-size:1.7rem;font-weight:900;color:var(--sk)}
+.a-stat span{font-size:.74rem;color:var(--text-secondary);font-weight:600}
+.a-stat i{font-size:1.1rem;color:var(--sk);margin-bottom:6px}
+.a-card{background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:16px;padding:16px;margin-bottom:14px}
+.a-card h3{font-size:.95rem;font-weight:800;display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.a-card h3 i{color:var(--sk)}
+.a-card p{font-size:.82rem;color:var(--text-secondary);line-height:2;margin:0}
+.a-actions-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.a-list-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.a-list-head h3{font-size:1.05rem;font-weight:900;display:flex;align-items:center;gap:9px}
+.a-list-head h3 i{color:var(--sk)}
+.a-item{display:flex;align-items:center;gap:10px;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:14px;padding:12px 14px;margin-bottom:9px;transition:.2s}
+.a-item:hover{border-color:rgba(69,185,255,.35)}
+.a-item .ai-ic{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;flex-shrink:0;color:#fff;background:var(--aic,var(--sk))}
+.a-item .ai-info{flex:1;min-width:0}
+.a-item .ai-info b{display:block;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.a-item .ai-info span{font-size:.72rem;color:var(--text-secondary);display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.a-item .ai-acts{display:flex;gap:6px;flex-shrink:0}
+.ai-btn{width:34px;height:34px;border-radius:10px;border:1px solid var(--border-color);background:transparent;color:var(--text-secondary);cursor:pointer;display:grid;place-items:center;font-size:.8rem;transition:.2s}
+.ai-btn:hover{color:var(--sk);border-color:rgba(69,185,255,.45)}
+.ai-btn.del:hover{color:var(--rd);border-color:rgba(255,82,82,.5)}
+.a-in{width:100%;padding:10px 13px;border-radius:11px;border:1px solid var(--border-color);background:var(--bg-tertiary);color:#fff;font-family:inherit;font-size:.88rem;outline:none;transition:.2s}
+.a-in:focus{border-color:var(--sk)}
+textarea.a-in{resize:vertical;min-height:80px;line-height:1.9}
+.a-lbl{font-size:.76rem;font-weight:700;color:var(--text-secondary);margin:12px 0 5px;display:block}
+.a-grid2{display:grid;grid-template-columns:1fr;gap:8px}
+@media (min-width:560px){.a-grid2{grid-template-columns:1fr 1fr}}
+.a-grid2 .a-lbl{margin-top:0}
+.a-err{color:var(--rd);font-size:.78rem;font-weight:700;min-height:1.6em;margin-top:8px}
+.a-ok{color:var(--gr);font-size:.78rem;font-weight:700;min-height:1.2em;margin-top:4px}
+.pw-eye{display:inline-flex;align-items:center;gap:6px;margin-top:7px;background:none;border:none;color:var(--text-secondary);cursor:pointer;font-family:inherit;font-size:.74rem;font-weight:700;padding:0;transition:.2s}
+.pw-eye:hover{color:var(--sk)}
+.forgot-link{display:inline-block;background:none;border:none;color:var(--sk);cursor:pointer;font-family:inherit;font-size:.76rem;font-weight:700;padding:0;margin-top:10px}
+.forgot-link:hover{text-decoration:underline}
+.lg-head{text-align:center;margin-bottom:6px}
+.lg-head .lg-ic{width:60px;height:60px;border-radius:18px;margin:0 auto 10px;display:grid;place-items:center;font-size:1.5rem;color:#fff;background:linear-gradient(135deg,var(--sk),var(--pu))}
+.lg-head b{font-size:1.05rem;font-weight:900;display:block}
+.lg-head span{font-size:.74rem;color:var(--text-secondary)}
+.tabs2{display:flex;gap:8px;margin:4px 0 2px}
+.tabs2 button{flex:1;padding:10px;border-radius:12px;border:1px solid var(--border-color);background:transparent;color:var(--text-secondary);font-family:inherit;font-weight:700;font-size:.85rem;cursor:pointer;transition:.2s}
+.tabs2 button.on{background:var(--sk);border-color:var(--sk);color:#061423}
+/* ⬅ انتخابگر وضعیت همکاری */
+.av-opts{display:flex;flex-direction:column;gap:10px;margin-top:10px}
+.av-opt{display:flex;align-items:flex-start;gap:12px;padding:13px 15px;border-radius:14px;border:1.5px solid var(--border-color);background:var(--bg-tertiary);cursor:pointer;transition:.2s}
+.av-opt:hover{border-color:rgba(69,185,255,.4)}
+.av-opt input{margin-top:6px;accent-color:var(--sk);width:16px;height:16px;flex-shrink:0;cursor:pointer}
+.av-opt.on{border-color:var(--oc);background:color-mix(in srgb,var(--oc) 8%,transparent)}
+.av-opt .av-dot-mini{width:12px;height:12px;border-radius:50%;background:var(--oc);flex-shrink:0;margin-top:8px;box-shadow:0 0 10px var(--oc)}
+.av-opt b{display:block;font-size:.88rem;font-weight:800}
+.av-opt span{display:block;font-size:.74rem;color:var(--text-secondary);line-height:1.9}
+body.light .a-in{background:#fff;color:#17233c}
+body.light .a-item,body.light .a-card,body.light .a-stat,body.light .a-side,body.light .a-top{background:#fff;border-color:#d8e2f0}
+body.light .a-item .ai-info span,body.light .a-card p,body.light .a-lbl,body.light .a-stat span{color:#5b6b86}
+body.light .a-tab{color:#5b6b86}
+body.light .tabs2 button{color:#5b6b86}
+body.light .av-opt{background:#f4f8fe}
+
+.v-chart{display:flex;align-items:flex-end;gap:5px;height:180px;padding-top:10px}
+.v-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0;height:100%;justify-content:flex-end}
+.v-bar{width:100%;max-width:34px;border-radius:8px 8px 4px 4px;background:linear-gradient(180deg,var(--sk),var(--pu));min-height:4px;transition:height .6s cubic-bezier(.2,.7,.25,1)}
+.v-col.today .v-bar{background:linear-gradient(180deg,var(--gr),#1f7a52)}
+.v-num{font-size:.64rem;font-weight:800;color:var(--sk);min-height:1em}
+.v-col.today .v-num{color:var(--gr)}
+.v-lbl{font-size:.58rem;color:var(--text-secondary);white-space:nowrap}
+
+/* ═══ فوتر کامل و جذاب ═══ */
+footer{position:relative;z-index:1;background:linear-gradient(180deg,var(--bg-primary),var(--bg-secondary));border-top:1px solid var(--border-color);padding:48px 0 22px;margin-top:30px;overflow:hidden}
+/* ⬅ فوتر هم مثل main فاصله‌ی سایدبار رو داشته باشه */
+@media (min-width:921px){
+  footer{margin-inline-start:258px}
+  body.side-closed footer{margin-inline-start:0}
+}
+/* ⬅ سایدبار بالاتر از فوتر باشه */
+@media (min-width:921px){
+  .sidebar{z-index:200}
+}
+footer::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--sk),var(--pu),transparent);opacity:.6}
+footer::after{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:240px;height:1px;background:linear-gradient(90deg,transparent,var(--sk-strong),transparent);opacity:1;box-shadow:0 0 30px var(--sk)}
+.f-in{display:flex;flex-direction:column;gap:30px}
+.f-grid{display:grid;grid-template-columns:1fr;gap:28px}
+@media (min-width:680px){.f-grid{grid-template-columns:1.6fr 1fr 1fr 1.2fr;gap:34px}}
+.f-brand{display:flex;flex-direction:column;gap:14px}
+.f-logo{display:flex;align-items:center;gap:10px;color:#fff}
+.f-logo svg{width:38px;height:38px;color:var(--sk)}
+.f-name{font-family:var(--font-fira);font-weight:800;font-size:1.05rem;direction:ltr;letter-spacing:-.5px}
+.f-tag{font-size:.82rem;color:var(--text-secondary);line-height:2;max-width:24rem}
+.f-status-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:4px}
+.f-status{display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border-radius:50px;border:1px solid var(--st-bd,rgba(61,220,151,.4));background:var(--st-bg,rgba(61,220,151,.1));color:var(--st-c,var(--gr));font-weight:800;font-size:.74rem}
+.f-loc{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:50px;border:1px solid var(--border-color);background:var(--bg-tertiary);color:var(--text-secondary);font-weight:700;font-size:.74rem}
+.f-loc i{color:var(--sk)}
+.f-col{display:flex;flex-direction:column;gap:8px}
+.f-col h4{font-size:.82rem;font-weight:800;color:#fff;margin-bottom:4px;display:flex;align-items:center;gap:7px}
+.f-col h4::before{content:"";width:14px;height:2px;background:var(--sk);border-radius:2px;display:inline-block}
+.f-col a,.f-col button{display:flex;align-items:center;gap:8px;padding:6px 4px;color:var(--text-secondary);text-decoration:none;font-size:.82rem;font-weight:600;transition:.2s;background:none;border:none;cursor:pointer;font-family:inherit;text-align:start;overflow-wrap:anywhere}
+.f-col a:hover,.f-col button:hover{color:var(--sk);transform:translateX(-4px)}
+html[dir="ltr"] .f-col a:hover,html[dir="ltr"] .f-col button:hover{transform:translateX(4px)}
+.f-col a i,.f-col button i{width:16px;text-align:center;color:var(--sk);font-size:.85rem}
+.f-col a.ltr,.f-col a.ltr i{direction:ltr}
+.f-col a.ltr{text-align:left}
+.f-bottom{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;padding-top:18px;border-top:1px solid var(--border-color)}
+.f-copy{font-size:.78rem;color:var(--text-secondary);font-weight:600}
+.f-copy b{color:var(--sk);font-weight:800}
+.f-built{font-size:.74rem;color:var(--text-secondary);font-weight:600;display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap}
+.f-built i{color:var(--rd);animation:fHeart 1.2s ease-in-out infinite}
+@keyframes fHeart{0%,100%{transform:scale(1)}50%{transform:scale(1.18)}}
+.f-tech{font-family:var(--font-fira);font-size:.7rem;color:var(--sk);direction:ltr;background:rgba(69,185,255,.08);padding:2px 8px;border-radius:6px;border:1px solid rgba(69,185,255,.2)}
+body.light footer{background:linear-gradient(180deg,#f2f6fc,#fff)}
+body.light .f-col a,body.light .f-col button,body.light .f-copy,body.light .f-built,body.light .f-tag{color:#5b6b86}
+body.light .f-logo,body.light .f-col h4,body.light .f-copy b{color:#17233c}
+body.light .f-loc{background:#fff;border-color:#d8e2f0}
+body.light .f-tech{background:rgba(69,185,255,.08);border-color:rgba(69,185,255,.2);color:var(--sk)}
+
+@media (min-width:921px){
+  body{padding-top:0}
+  .sidebar{display:flex;position:fixed;top:0;inset-inline-start:0;height:100vh;align-self:flex-start;width:258px;flex-shrink:0;flex-direction:column;gap:30px;padding:30px 20px 24px;border-inline-end:1px solid var(--border-color);background:rgba(15,20,30,.6);backdrop-filter:blur(12px);transition:width .35s ease,opacity .3s,padding .35s,z-index .3s}
+  /* فاصله‌ی main برای جبران sidebar ثابت */
+  main{margin-inline-start:258px}
+  body.side-closed main{margin-inline-start:0}
+  body.side-closed .sidebar{width:0;padding-inline:0;opacity:0;overflow:hidden;border-inline-end-color:transparent}
+  .side-logo svg{width:42px;height:42px}
+  .wordmark{font-size:1.2rem}
+  .side-nav{display:flex;flex-direction:column;gap:6px;min-width:218px}
+  .side-nav a{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:13px;color:var(--text-secondary);text-decoration:none;font-weight:600;font-size:.95rem;border:1px solid transparent;transition:.25s;white-space:nowrap}
+  .side-nav a i{width:20px;text-align:center;font-size:.98rem}
+  .side-nav a:hover{color:#fff;background:var(--bg-secondary);border-color:var(--border-color)}
+  .side-foot{margin-top:auto;display:flex;flex-direction:column;gap:14px;min-width:218px}
+  .side-socials{display:flex;gap:8px;padding:0 4px}
+  .side-socials a{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:var(--bg-secondary);border:1px solid var(--border-color);color:var(--text-secondary);font-size:.95rem;transition:.25s;text-decoration:none}
+  .side-socials a:hover{color:var(--sk);border-color:rgba(69,185,255,.4);transform:translateY(-3px)}
+  .side-ver{font-size:.72rem;color:#5c6b8a;padding:0 6px;white-space:nowrap}
+  .side-ver i{color:var(--sk)}
+  .topbar{display:none}
+  .mobile-panel{display:none}
+  .settings-panel{top:16px;inset-inline-start:16px;inset-inline-end:auto;width:262px;max-width:none;margin-inline:0}
+
+  .side-toggle{
+    display:grid;place-items:center;position:fixed;top:30px;inset-inline-start:196px;z-index:160;
+    width:42px;height:42px;border-radius:12px;
+    border:1px solid var(--border-color);background:var(--bg-secondary);cursor:pointer;
+    transition:top .35s,inset-inline-start .35s,border-color .2s;
+  }
+  .side-toggle:hover{border-color:rgba(69,185,255,.5)}
+  /* آیکون همبرگری (وقتی منو باز است) */
+  .side-toggle span{position:absolute;inset-inline-start:11px;width:20px;height:2px;background:#fff;border-radius:2px;transition:opacity .25s}
+  .side-toggle span:nth-child(1){top:14px}
+  .side-toggle span:nth-child(2){top:20px}
+  .side-toggle span:nth-child(3){top:26px}
+  /* آیکون فلش مینیمال (وقتی منو بسته است) */
+  .side-toggle .side-toggle-chevron{display:none;font-size:.85rem;color:#fff;line-height:1;transition:transform .25s}
+  body.side-closed .side-toggle .side-toggle-chevron{display:block}
+  body.side-closed .side-toggle span{opacity:0}
+  /* در rtl فلش به سمت چپ، در ltr به سمت راست (آینه‌شده) */
+  html[dir="ltr"] body.side-closed .side-toggle .side-toggle-chevron{transform:scaleX(-1)}
+  body.side-closed .side-toggle{top:20px;inset-inline-start:20px}
+
+  .hero{padding:72px 0 36px}
+  .hero h1{font-size:clamp(2rem,4.6vw,3.3rem)}
+  .typer-line{font-size:clamp(1rem,2.2vw,1.2rem);min-height:2.4rem}
+  .lead{font-size:.97rem}
+  .hero-grid{grid-template-columns:1.1fr .9fr;gap:clamp(30px,5vw,54px)}
+  .hero-visual{max-width:380px;margin:0}
+
+  .sec{padding-block:56px 10px}
+  .sec-head{gap:14px;margin-bottom:30px}
+  .sec-head h2{font-size:clamp(1.55rem,3.2vw,2.2rem)}
+  .sec-sub{font-size:.92rem}
+
+  .skills-more{display:inline-flex}
+
+  .p-index{gap:18px}
+  .p-row{padding:22px 22px 20px}
+  .p-idx{font-size:1.6rem}
+  .p-title{font-size:1.18rem}
+  .p-arrow{display:inline-block}
+
+  .a-body{flex-direction:row}
+  .a-side{flex-direction:column;width:210px;flex-shrink:0;overflow-y:auto;border-bottom:none;border-inline-end:1px solid var(--border-color);padding:14px 10px}
+  .a-tab{justify-content:flex-start}
+  .a-main{padding:22px}
+
+  .sf-open{display:inline-flex}
+  .term-modal{padding:20px}
+}
+@media (pointer:coarse){}
+
+@media print{
+  .hero-canvas,.preloader,.scroll-progress,.settings-panel,.term-fab,.term-modal,.term-tip,.toasts,.topbar,.mobile-panel,.sidebar,.filters,.brush-btn,.caret,.typer-line,.kicker,.sec-bar,.x-btn,.m-actions,.site-modal,.modal,.term-modal,.skills-more,.admin,.side-toggle,.avail-btn,.c-btns{display:none!important}
+  .layout{display:block}
+  body{background:#fff!important;color:#000!important;padding-top:0!important}
+  body::before{display:none}
+  html.js .reveal{opacity:1!important;transform:none!important}
+  html.js .values-list .value-card{opacity:1!important;animation:none!important}
+  .sec{padding-block:14px 4px}
+  .hero h1,.sec-head h2,.p-title,.tl-item h3,.value-card h3,.avail-card h2,.contact-head h2{color:#000!important;text-shadow:none!important}
+  .lead,.sec-sub,.tl-item p,.p-short,.m-meta,.tl-when,.value-card p,.avail-card p,.contact-head p{color:#444!important}
+  .skill-pill{border-color:#ccc!important;color:#000!important;background:#fff!important}
+  .skill-pill .tip,.skill-pill.extra{display:none}
+  .value-card,.c-card,.avail-card{border-color:#ccc!important;background:#fff!important}
+  footer{border-color:#ddd}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  html{scroll-behavior:auto}
+}

@@ -1,0 +1,45 @@
+# ═══ امنیت سایت — Apache 2.4 (سی‌پنل) ═══
+
+# جلوی لیست‌شدن فایل‌های پوشه‌ها
+Options -Indexes
+
+# دسترسی مستقیم به فایل‌های داده و پیکربندی بسته باشد
+<FilesMatch "\.(json|log|tmp|md)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>
+
+# هدرهای امنیتی
+<IfModule mod_headers.c>
+  Header set X-Content-Type-Options "nosniff"
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+  Header set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+</IfModule>
+
+# کش فایل‌های ثابت (css/js/fonts)
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/css "access plus 7 days"
+  ExpiresByType application/javascript "access plus 7 days"
+  ExpiresByType image/svg+xml "access plus 14 days"
+  ExpiresByType image/png "access plus 14 days"
+  ExpiresByType image/jpeg "access plus 14 days"
+  ExpiresByType font/woff2 "access plus 30 days"
+</IfModule>
+
+# فایل‌های مخفی را سرو نکن
+<FilesMatch "^\.">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>

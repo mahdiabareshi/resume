@@ -1,0 +1,6 @@
+# این پوشه فقط سمت سرور (api.php) باید بخواند — دسترسی مستقیم وب ممنوع
+Require all denied
+<IfModule !mod_authz_core.c>
+Order allow,deny
+Deny from all
+</IfModule>
